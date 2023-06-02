@@ -1,16 +1,22 @@
-import HomeHeroSection from "./components/Content/Home/HeroSection"
-import HomeFeatureSection from "./components/Content/Home/FeatureSection"
+import HomeHeroSection from "@/components/Content/Home/HeroSection";
+import HomeFeatureSection from "@/components/Content/Home/FeatureSection";
 import {
   ArrowPathIcon,
   CloudArrowUpIcon,
   FingerPrintIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
-import HomeFeatureSectionSecondLayer from "./components/Content/Home/FeatureSectionSecondLayer";
-import HomeFooterSection from "./components/Content/Home/FooterSection";
+import HomeFeatureSectionSecondLayer from "@/components/Content/Home/FeatureSectionSecondLayer";
+import HomeFooterSection from "@/components/Content/Home/FooterSection";
 import { useSetupContext } from "@/utils/context/SetupContext/SetupContext";
 import { useEffect } from "react";
+import { Typography } from "@mui/material";
+import { usePlatform } from "@/utils/hooks/useToken";
+import { useRouter } from "next/router";
+import { useAuthenticationContext } from "@/utils/context/AuthContext/AuthContext";
 const Home = () => {
+  const router = useRouter()
+  const { checkAuthentication } = useAuthenticationContext()
   const features = [
     {
       name: "Push to deploy",
@@ -39,11 +45,53 @@ const Home = () => {
   ];
   const { setupCheckUsersDB } = useSetupContext()
   useEffect(() => {
-    setupCheckUsersDB()
+    let savedPlatform;
+    const savedPlatformStorage = localStorage.getItem('PF')
+    if(typeof savedPlatformStorage == 'string'){
+        savedPlatform = JSON.parse(savedPlatformStorage)
+    }
+
+    if(!savedPlatform){
+        return;
+    } else {
+        checkAuthentication()
+    }
+  }, [])
+  useEffect(() => {
+    setupCheckUsersDB({location : "homepage"})
   }, [])
   return (
     <>
-      <HomeHeroSection />
+      <HomeHeroSection showNavSection>
+      <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+              <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                We always make your pets safe.{' '}
+                <a href="#" className="font-semibold text-indigo-600">
+                  <span className="absolute inset-0" aria-hidden="true" />
+                  Read more <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
+            </div>
+            <div className="text-center">
+              <Typography className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                Abys Agrivet and Animal Clinic
+              </Typography>
+              <p className="mt-6 text-lg leading-8 text-gray-600">
+                Make an appointment for your pets.
+              </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6">
+                <a
+                  href="#"
+                  className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Get started
+                </a>
+                <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+                  Learn more <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+      </HomeHeroSection>
       <HomeFeatureSection 
           children={
             <img

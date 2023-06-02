@@ -31,6 +31,7 @@ export const useApiCallBack = <R, A extends unknown>(asyncFn: (api: Api, args: A
         }
     })
 
+
 function createApi(client: AxiosInstance) {
     return new Api(
         new AuthenticationApi(client),
