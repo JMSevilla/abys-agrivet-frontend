@@ -1,21 +1,25 @@
-import { Typography } from '@mui/material'
-import NavSection from './HomeNav'
-import { ReactNode } from 'react'
+import { Typography } from "@mui/material";
+import NavSection from "./HomeNav";
+import { ReactNode } from "react";
 
 type Props = {
-  children: ReactNode
-  showNavSection: boolean
-}
-const HomeHeroSection = (props : Props) => {
-
-    return (
+  children: ReactNode;
+  showNavSection: boolean;
+  disableMarginTop?: boolean;
+};
+const HomeHeroSection = (props: Props) => {
+  return (
     <div className="isolate bg-white">
-      {props.showNavSection && <NavSection /> }
+      {props.showNavSection && <NavSection />}
       <main>
         <div className="relative px-6 lg:px-8">
-          <div className={
-            props.showNavSection ? "mx-auto max-w-4xl" : "mx-auto max-w-4xl py-32 sm:py-48 lg:py-56"
-          }>
+          <div
+            className={
+              props.disableMarginTop
+                ? "mx-auto max-w-4xl"
+                : "mx-auto max-w-4xl py-32 sm:py-48 lg:py-56"
+            }
+          >
             {props.children}
           </div>
           <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
@@ -46,7 +50,7 @@ const HomeHeroSection = (props : Props) => {
         </div>
       </main>
     </div>
-    )
-}
+  );
+};
 
-export default HomeHeroSection
+export default HomeHeroSection;
