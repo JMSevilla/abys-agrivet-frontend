@@ -17,7 +17,7 @@ const Platform = () => {
   const { checkAuthentication } = useAuthenticationContext();
   useEffect(() => {
     let savedPlatform;
-    const savedPlatformStorage = localStorage.getItem("PF");
+    const savedPlatformStorage = sessionStorage.getItem("PF");
     if (typeof savedPlatformStorage == "string") {
       savedPlatform = JSON.parse(savedPlatformStorage);
     }
@@ -29,9 +29,9 @@ const Platform = () => {
     }
   }, []);
   const handleNavigatePlatform = (path: string, key: string) => {
-    router.push(path);
     setPlatformAtom({ platform: key });
     setStoragePlatform(key);
+    router.push(path);
   };
   return (
     <>

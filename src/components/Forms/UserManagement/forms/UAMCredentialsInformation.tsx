@@ -60,7 +60,7 @@ const UAMCredentialsInformationForm = () => {
             label='Password'
             type='password'
             />
-            <PasswordStrengthMeter result={result} />
+            <PasswordStrengthMeter result={result} password={getValues().password} />
             <ControlledTextField 
             control={control}
             name='conpassword'
@@ -122,7 +122,8 @@ export const UAMCredentialsInformation = () => {
                     access_level: basicInformation?.access_level,
                     branch: basicInformation?.branch,
                     email: values.email,
-                    password: values.password
+                    password: values.password,
+                    phoneNumber: basicInformation?.phoneNumber
                 }
                 mutate(obj, {
                     onSuccess: (response: any) => {
@@ -145,20 +146,21 @@ export const UAMCredentialsInformation = () => {
                         }
                     },
                     onError: (error : any) => {
-                        handleOnToast(
-                            "Something went wrong",
-                            "top-right",
-                            false,
-                            true,
-                            true,
-                            true,
-                            undefined,
-                            "dark",
-                            "error"
-                        );
-                        setLoading(false)
-                        localStorage.clear()
-                        router.push('/platform')
+                        console.log(error)
+                        // handleOnToast(
+                        //     "Something went wrong",
+                        //     "top-right",
+                        //     false,
+                        //     true,
+                        //     true,
+                        //     true,
+                        //     undefined,
+                        //     "dark",
+                        //     "error"
+                        // );
+                        // setLoading(false)
+                        // localStorage.clear()
+                        // router.push('/platform')
                     }
                 })
             }

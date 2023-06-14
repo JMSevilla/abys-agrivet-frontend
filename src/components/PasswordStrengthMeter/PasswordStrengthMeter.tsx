@@ -3,9 +3,10 @@ import * as zxcvbnCommonPackage from "@zxcvbn-ts/language-common";
 import { useEffect } from "react";
 type Props = {
   result: any;
+  password?: any
 };
 export const PasswordStrengthMeter = (props: Props) => {
-  const { result } = props;
+  const { result, password } = props;
   const options = {
     dictionary: {
       ...zxcvbnCommonPackage.dictionary,
@@ -14,11 +15,15 @@ export const PasswordStrengthMeter = (props: Props) => {
   };
   zxcvbnOptions.setOptions(options);
   const createPasswordLabel = (result: any) => {
-    switch (result.score) {
+    if(!/[!@#$%^&*()_+]/.test(password) && !/[A-Z]/.test(password)){
+      result.score = 0
+      return "Weak"
+    } else {
+switch (result.score) {
       case 0:
         return "Weak";
       case 1:
-        return "Weak";
+        return "Weak"
       case 2:
         return "Fair";
       case 3:
@@ -28,6 +33,8 @@ export const PasswordStrengthMeter = (props: Props) => {
       default:
         return "Weak";
     }
+    }
+    
   };
 
   return (

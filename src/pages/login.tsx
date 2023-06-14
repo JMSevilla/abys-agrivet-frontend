@@ -8,7 +8,7 @@ const Login: React.FC = () => {
     const { checkAuthentication } = useAuthenticationContext()
     useEffect(() => {
         let savedPlatform;
-        const savedPlatformStorage = localStorage.getItem('PF')
+        const savedPlatformStorage = sessionStorage.getItem('PF')
         if(typeof savedPlatformStorage == 'string'){
             savedPlatform = JSON.parse(savedPlatformStorage)
         }

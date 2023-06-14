@@ -8,7 +8,7 @@ export const BaseUAMSchema = z.object({
     username: requiredString('Your username is required.'),
     branch: z.any().optional(),
     access_level: requiredString('Kindly select access level.'),
-    phoneNumber: z.string().optional()
+    phoneNumber: requiredString("Your phone number is required.")
 })
 
 export const uam_schema = z.discriminatedUnion('hasNoMiddleName', [

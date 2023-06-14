@@ -14,3 +14,7 @@ export const usePlatform = () =>
 
 export const useUserType = () =>
   useSessionStorage<string | undefined>("UT", undefined);
+
+export const useUserId = () => useSessionStorage<string | undefined>("UID", undefined)
+
+export const useReferences = () => useSessionStorage<any>("REF", undefined)

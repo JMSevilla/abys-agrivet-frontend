@@ -4,11 +4,12 @@ import { useActiveSteps } from "@/utils/hooks/useActiveStep";
 
 export type BottomButtonGroupsProps = {
     continueButtonLabel?: string;
-    onContinue?: () => boolean;
+    onContinue?: () => any;
     onBack?: () => boolean
     hideBack?: boolean
     disabledContinue?: boolean
     max_array_length: number
+    hideContinue?: boolean
 }
 
 export const BottomButtonGroup: React.FC<BottomButtonGroupsProps> = ({
@@ -17,7 +18,8 @@ export const BottomButtonGroup: React.FC<BottomButtonGroupsProps> = ({
     onBack,
     hideBack,
     disabledContinue,
-    max_array_length
+    max_array_length,
+    hideContinue = false
 }) => {
     const { next, previous } = useActiveSteps(max_array_length)
     const handleContinue = () => {
@@ -34,17 +36,19 @@ export const BottomButtonGroup: React.FC<BottomButtonGroupsProps> = ({
     }
     return (
         <>
-            <Grid item xs={8} display='flex' justifyContent='center'>
+            {!hideContinue && (
+                <Grid item xs={8} display='flex' justifyContent='center'>
                 <NormalButton 
-                sx={{ mx: 'auto', mt: 2, width: [, 300]}}
-                color='primary'
-                variant='outlined'
-                fullWidth
-                disabled={disabledContinue}
-                onClick={handleContinue}
-                children={continueButtonLabel}
-                />
-            </Grid>
+                    sx={{ mx: 'auto', mt: 2, width: [, 300]}}
+                    color='primary'
+                    variant='outlined'
+                    fullWidth
+                    disabled={disabledContinue}
+                    onClick={handleContinue}
+                    children={continueButtonLabel}
+                    />
+                </Grid>
+            )}
             {!hideBack && (
                 <Grid item xs={8} display='flex' justifyContent='center'>
                     <NormalButton 

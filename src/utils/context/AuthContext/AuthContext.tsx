@@ -14,24 +14,48 @@ export const AuthenticationProvider: React.FC<React.PropsWithChildren<{}>> = ({c
     const [branchPath, setBranchPath] = useBranchPath()
     const checkAuthentication = () => {
             return new Promise((resolve) => {
-                let savedAuthenticationStorage;
+            let savedAuthenticationStorage;
             let savedPath;
             let savedPlatform;
-            const savedAuthStorage = localStorage.getItem('AT')
-            const savedPathStorage = localStorage.getItem('BP')
-            const savedPlatformStorage = localStorage.getItem('PF')
+            let userType;
+            let savedRef;
+            let savedUid;
+            const savedUidStorage = sessionStorage.getItem('UID')
+            const savedRefStorage = sessionStorage.getItem('REF')
+            const userTypeStorage = sessionStorage.getItem('UT')
+            const savedAuthStorage = sessionStorage.getItem('AT')
+            const savedPathStorage = sessionStorage.getItem('BP')
+            const savedPlatformStorage = sessionStorage.getItem('PF')
+            if(typeof savedUidStorage == 'string' && typeof savedRefStorage == 'string'){
+                savedRef = JSON.parse(savedRefStorage)
+                savedUid = JSON.parse(savedUidStorage)
+            }
             if(typeof savedAuthStorage == "string" && typeof savedPathStorage == "string" && typeof savedPlatformStorage == 'string') {
                 savedAuthenticationStorage = JSON.parse(savedAuthStorage)
                 savedPath = JSON.parse(savedPathStorage)
                 savedPlatform = JSON.parse(savedPlatformStorage)
             }
-            if(!savedAuthenticationStorage || !savedPath){
+            if(typeof userTypeStorage == 'string') {
+                userType = JSON.parse(userTypeStorage)
+            }
+            if(!savedRef || !savedUid){
                 resolve("no-auth")
                 router.push('/login')
-            } else{
-                resolve("authenticated")
-                setIdentifier(false)
-                router.push(decrypt(savedPath))
+            } else {
+                if(!savedAuthenticationStorage || !savedPath){
+                    if(!userType) {
+                        resolve("no-auth")
+                        router.push('/login')
+                    } else {
+                        resolve("authenticated")
+                        setIdentifier(false)
+                        router.push(decrypt(savedPath))
+                    }
+                } else{
+                    resolve("authenticated")
+                    setIdentifier(false)
+                    router.push(decrypt(savedPath))
+                }
             }
             })
     }

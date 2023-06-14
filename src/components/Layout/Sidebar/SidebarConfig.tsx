@@ -5,6 +5,11 @@ import CategoryIcon from "@mui/icons-material/Category";
 import { ListItemIcon } from "@mui/material";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
+
+import EventNoteIcon from '@mui/icons-material/EventNote'
+import CreateIcon from '@mui/icons-material/Create';
+import PreviewIcon from '@mui/icons-material/Preview';
+
 type sidebarProps = {
   objectID: number;
   name: string;
@@ -42,10 +47,12 @@ export const sidebarSettingsArea: SettingsListOptions[] = [
   {
     objectID: 1,
     text: "Settings",
-    uri: "/admin/dashboard",
+    uri: "/admin/settings/settings",
     icon: <SettingsIcon className="text-white" />,
   },
 ];
+
+
 
 export const sidebarList: sidebarProps[] = [
   {
@@ -150,3 +157,99 @@ export const sidebarExpand: sidebarExpandProps[] = [
     ],
   },
 ];
+
+export const sidebarCustomerList: sidebarProps[] = [
+  {
+    objectID: 1,
+    name: "Customer",
+    title: "Customer Overview",
+    dropDown: false,
+    uri: "/customer/dashboard",
+    icon: <AssessmentIcon className="text-white" />,
+  },
+  {
+    objectID: 2,
+    name: "Appointment",
+    title: "Appointment",
+    dropDown: true,
+    icon: <EventNoteIcon className="text-white" />,
+    dropDownChildren: [
+      {
+        parentMenu: "Appointment",
+        icon: (
+          <>
+            <ListItemIcon>
+              <EventNoteIcon className="text-white" />
+            </ListItemIcon>
+          </>
+        ),
+        childMenu: [
+          {
+            title: "Create",
+            dropDown: true,
+            uri: "/customer/appointment/create",
+            icon: (
+              <>
+                <ListItemIcon>
+                  <CreateIcon className="text-white" />
+                </ListItemIcon>
+              </>
+            ),
+          },
+          {
+            title: "View",
+            dropDown: true,
+            uri: "/customer/dashboard",
+            icon: (
+              <>
+                <ListItemIcon>
+                  <PreviewIcon className="text-white" />
+                </ListItemIcon>
+              </>
+            ),
+          },
+        ],
+        dropDown: false,
+      },
+    ],
+  },
+]
+
+export const sidebarCustomerExpand: sidebarExpandProps[] = [
+  {
+    parentMenu: "Appointment",
+    icon: (
+      <>
+        <ListItemIcon>
+          <EventNoteIcon className="text-white" />
+        </ListItemIcon>
+      </>
+    ),
+    childMenu: [
+      {
+        title: "Create Appointment",
+        dropDown: true,
+        uri: "/customer/dashboard",
+        icon: (
+          <>
+            <ListItemIcon>
+              <EventNoteIcon className="text-white" />
+            </ListItemIcon>
+          </>
+        ),
+      },
+      {
+        title: "Services",
+        dropDown: true,
+        uri: "/customer/dashboard",
+        icon: (
+          <>
+            <ListItemIcon>
+              <EventNoteIcon className="text-white" />
+            </ListItemIcon>
+          </>
+        ),
+      },
+    ],
+  }
+]

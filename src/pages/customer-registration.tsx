@@ -24,15 +24,7 @@ const CustomerAccountRegistration = () => {
           >
             Customer Account Registration
           </Typography>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{" "}
-            <a
-              href="#"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              change signin account
-            </a>
-          </p>
+         
         </div>
         <CustomerFormAdditionalDetails />
       </HomeHeroSection>

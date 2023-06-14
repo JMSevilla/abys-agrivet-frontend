@@ -38,7 +38,7 @@ export const customerSchema = z
       path: ["conpassword"],
       message: "Password is not match",
     }
-  );
+  )
 
 export type CustomerAccountType = z.infer<typeof customerSchema>;
 

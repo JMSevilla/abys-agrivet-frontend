@@ -140,7 +140,7 @@ const CustomerAccountForm = () => {
             type="password"
             shouldUnregister
           />
-          <PasswordStrengthMeter result={result} />
+          <PasswordStrengthMeter result={result} password={getValues().password} />
         </Grid>
         <Grid item xs={6}>
           <ControlledTextField

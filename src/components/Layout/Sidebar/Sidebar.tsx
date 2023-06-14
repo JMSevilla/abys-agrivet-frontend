@@ -38,6 +38,7 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
     DrawerHeader,
     sidebarConfig,
     subsidebarConfig,
+    globals
   } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [branchPath, setBranchPath] = useBranchPath();
@@ -66,6 +67,12 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
     handleSelectedIndex(event, innerIndex);
     setBranchPath(encrypt(uri));
   };
+  const handlePushOnSettings = (
+    uri: string
+  ) => {
+    router.push(uri)
+    setBranchPath(encrypt(uri))
+  }
   return (
     <>
       <Drawer
@@ -215,7 +222,9 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
             </List>
             <Divider className="bg-sideBarTabHover" />
             <List>
-              {sidebarSettingsArea?.length > 0 &&
+              {
+                globals?.storedType == 'employee' && 
+                sidebarSettingsArea?.length > 0 &&
                 sidebarSettingsArea.map((item, index) => (
                   <Box className="flex flex-col items-center">
                     <ListItem
@@ -238,7 +247,7 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
                           justifyContent: open ? "initial" : "center",
                           px: 2.5,
                         }}
-                        onClick={() => router.push(item.uri)}
+                        onClick={() => handlePushOnSettings(item.uri)}
                       >
                         <ListItemIcon
                           sx={{
@@ -257,7 +266,8 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
                       </ListItemButton>
                     </ListItem>
                   </Box>
-                ))}
+                ))
+              }
             </List>
           </Box>
           <Box className="flex flex-col py-2 gap-2">

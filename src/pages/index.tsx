@@ -14,9 +14,8 @@ import { Typography } from "@mui/material";
 import { usePlatform } from "@/utils/hooks/useToken";
 import { useRouter } from "next/router";
 import { useAuthenticationContext } from "@/utils/context/AuthContext/AuthContext";
+import { useApiCallBack } from "@/utils/hooks/useApi";
 const Home = () => {
-  const router = useRouter();
-  const { checkAuthentication } = useAuthenticationContext();
   const features = [
     {
       name: "Push to deploy",
@@ -44,22 +43,17 @@ const Home = () => {
     },
   ];
   const { setupCheckUsersDB } = useSetupContext();
-  useEffect(() => {
-    let savedPlatform;
-    const savedPlatformStorage = localStorage.getItem("PF");
-    if (typeof savedPlatformStorage == "string") {
-      savedPlatform = JSON.parse(savedPlatformStorage);
-    }
+  const getAllReminders = useApiCallBack(api => api.abys.getAllReminders())
 
-    if (!savedPlatform) {
-      return;
-    } else {
-      checkAuthentication();
-    }
-  }, []);
   useEffect(() => {
     setupCheckUsersDB({ location: "homepage" });
   }, []);
+  useEffect(() => {
+    getAllReminders.execute()
+    .then(res => {
+      console.log(res.data)
+    })
+  }, [])
   return (
     <>
       <HomeHeroSection showNavSection disableMarginTop={false}>

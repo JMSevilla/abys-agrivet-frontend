@@ -30,6 +30,7 @@ type Props = Pick<OutlinedInputProps, 'value' | 'label'> & {
     onChange?: (_v: string) => void;
     helperText?: string
     error?: boolean
+    disabled?: boolean
 }
 
 const MobileMaskInput = React.forwardRef<HTMLElement, MaskInputProps>(function TextMaskCustom(

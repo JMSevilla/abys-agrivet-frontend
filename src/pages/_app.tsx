@@ -14,6 +14,8 @@ import "@/components/PasswordStrengthMeter/PasswordStrengthMeter.css";
 import {
   sidebarList,
   sidebarExpand,
+  sidebarCustomerExpand,
+  sidebarCustomerList
 } from "@/components/Layout/Sidebar/SidebarConfig";
 import { SetupProvider } from "@/utils/context/SetupContext/SetupContext";
 import ToastContext from "@/utils/context/Toast/ToastContext";
@@ -26,6 +28,9 @@ import DashboardLayout from "@/components/Layout";
 import React, { useEffect } from "react";
 import { UserProvider } from "@/utils/context/UserContext/UserContext";
 import { ControlledBackdrop } from "@/components";
+import { GlobalsProvider } from "@/utils/context/HelperContext/HelperContext";
+import "react-quill/dist/quill.snow.css";
+
 export type NextPageWithLayout<P = any, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -53,8 +58,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     setLoading(!loading);
     let savedAuthenticationStorage;
     let savedUserType;
-    const savedUserTypeStorage = localStorage.getItem("UT");
-    const savedAuthStorage = localStorage.getItem("AT");
+    const savedUserTypeStorage = sessionStorage.getItem("UT");
+    const savedAuthStorage = sessionStorage.getItem("AT");
     if (
       typeof savedAuthStorage == "string" &&
       typeof savedUserTypeStorage == "string"
@@ -72,9 +77,10 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       setStoredValue(accessToken);
       setStoredType(savedUserType);
     }
-  }, [accessToken]);
+  }, [accessToken, userType]);
   return (
     <>
+      <GlobalsProvider globals={{storedValue : storedValue, storedType: storedType}}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
@@ -99,10 +105,10 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                   ) : storedValue ? (
                     <DashboardLayout
                       sidebarConfig={
-                        storedType == "employee" ? sidebarList : []
+                        storedType == "employee" ? sidebarList : sidebarCustomerList
                       }
                       subsidebarConfig={
-                        storedType == "employee" ? sidebarExpand : []
+                        storedType == "employee" ? sidebarExpand : sidebarCustomerExpand
                       }
                     >
                       {getLayout(<Component {...pageProps} />)}
@@ -116,6 +122,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           </SetupProvider>
         </ThemeProvider>
       </QueryClientProvider>
+      </GlobalsProvider>
     </>
   );
 }

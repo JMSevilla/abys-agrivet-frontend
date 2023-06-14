@@ -141,7 +141,11 @@ const Dashboard: React.FC = () => {
             </Grid>
           </ControlledGrid>
           <UncontrolledCard style={{ margin: "10px" }}>
-            <SchedulerCalendar />
+            {/* <SchedulerCalendar 
+            appointments={[]} 
+            handleSelectedEvent={() => console.log("")} 
+            views={[]}
+            handleSelection={() => console.log("")}/> */}
           </UncontrolledCard>
         </Container>
       )}

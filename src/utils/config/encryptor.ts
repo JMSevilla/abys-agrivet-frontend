@@ -11,7 +11,7 @@ export const encrypt = (data: string) => {
   return Buffer.concat([cipher.update(data,), cipher.final(), iv]).toString(ENCODING);
 }
 
-export const decrypt = (data: string) => {
+export const decrypt = (data: any) => {
   const binaryData = new Buffer(data, ENCODING);
   const iv = binaryData.slice(-IV_LENGTH);
   const encryptedData = binaryData.slice(0, binaryData.length - IV_LENGTH);

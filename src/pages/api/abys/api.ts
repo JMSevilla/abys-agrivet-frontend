@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { BranchProps, SMSVerificationProps } from "@/utils/types";
+import { BranchProps, CreateNewAppointment, CreateNewScheduleProps, SMSVerificationProps } from "@/utils/types";
 export class AbysApi {
   constructor(private readonly axios: AxiosInstance) {}
 
@@ -15,9 +15,10 @@ export class AbysApi {
   public CheckSMSVerification(props: {
     code: string;
     email: string | undefined;
+    type?: string | undefined
   }) {
     return this.axios.post(
-      `/api/implverification/check-verification-code/${props.code}/${props.email}`
+      `/api/implverification/check-verification-code/${props.code}/${props.email}/${props.type}`
     );
   }
   public ResendSMS(props: { type: string; email: string | undefined }) {
@@ -53,5 +54,32 @@ export class AbysApi {
   }
   public getAllServices() {
     return this.axios.get("/api/implservices/get-all-services");
+  }
+  public branchOnServicesExceptAllBranch(){
+    return this.axios.get('/api/implbranch/appointment-branch-list')
+  }
+  public createNewSchedule(props: CreateNewScheduleProps){
+    return this.axios.post('/api/implappointment/create-schedule', props)
+  }
+  public findAllSchedulePerBranch(branch: number){
+    return this.axios.get(`/api/implappointment/get-all-schedule-per-branch/${branch}`)
+  }
+  public handleSelectedSchedule(id: number){
+    return this.axios.delete(`/api/implappointment/remove-selected-schedule/${id}`)
+  }
+  public CreateNewAppointment(props: CreateNewAppointment){
+    return this.axios.post('/api/implappointment/create-new-appointment', props)
+  }
+  public CheckFPEmail(email: string){
+    return this.axios.get(`/api/implusers/check-email-users/${email}`)
+  }
+  public getHighestID() {
+    return this.axios.get('/api/implappointment/get-highest-id')
+  }
+  public checkBeforeRemovingSchedule(id: number){
+    return this.axios.get(`/api/implappointment/check-before-removing/${id}`)
+  }
+  public getAllReminders(){
+    return this.axios.get('/api/implappointment/check-reminder')
   }
 }

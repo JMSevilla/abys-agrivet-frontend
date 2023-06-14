@@ -24,6 +24,8 @@ import {
   useBranchPath,
   usePlatform,
   useUserType,
+  useUserId,
+  useReferences,
 } from "@/utils/hooks/useToken";
 import { encrypt } from "@/utils/config/encryptor";
 import { PlatformAtom } from "@/utils/hooks/useAtomic";
@@ -36,6 +38,7 @@ const LoginForm: React.FC<
   const [branch, setBranch] = useState<SingleOption[]>([]);
   const [storageChecker, setStorageChecker] = useState<any>(null);
   const [platformStorage, setPlatformStorage] = usePlatform();
+  const [platformState, setPlatformState] = useState<any>(null)
   const { data } = useQuery({
     queryKey: "FetchAllBranches",
     queryFn: () =>
@@ -45,7 +48,7 @@ const LoginForm: React.FC<
     setBranch(data);
   }, [data]);
   const handleChangeSignType = (e: any, path: string) => {
-    localStorage.clear();
+    sessionStorage.clear();
     router.push(path);
   };
   const enterKeyTrigger = (event: any) => {
@@ -58,10 +61,11 @@ const LoginForm: React.FC<
   };
   useEffect(() => {
     let savedPlatform;
-    const savedPlatformStorage = localStorage.getItem("PF");
+    const savedPlatformStorage = sessionStorage.getItem("PF");
     if (typeof savedPlatformStorage == "string") {
       savedPlatform = JSON.parse(savedPlatformStorage);
     }
+    setPlatformState(savedPlatform)
     if (!savedPlatform) {
       setStorageChecker(null);
     } else {
@@ -82,11 +86,13 @@ const LoginForm: React.FC<
             <Typography className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
               Sign in to your account
             </Typography>
-            <p className="mt-2 text-center text-sm text-gray-600">
+            {
+              platformState == 'customer' && 
+              <p className="mt-2 text-center text-sm text-gray-600">
               Or{" "}
               <a
                 href={
-                  platformStorage == "customer"
+                  platformState == "customer"
                     ? "/customer-registration"
                     : "//"
                 }
@@ -95,6 +101,7 @@ const LoginForm: React.FC<
                 start creating your account
               </a>
             </p>
+            }
           </div>
           <div className="mt-8 space-y-6">
             <input type="hidden" name="remember" defaultValue="true" />
@@ -125,7 +132,7 @@ const LoginForm: React.FC<
               </div>
               <div
                 style={{
-                  display: platformStorage == "customer" ? "none" : "",
+                  display: platformState == "customer" ? "none" : "",
                 }}
               >
                 <label htmlFor="branch" className="sr-only">
@@ -139,7 +146,7 @@ const LoginForm: React.FC<
                   options={branch}
                   label="Select Branch"
                   onKeyPress={
-                    platformStorage != "customer"
+                    platformState != "customer"
                       ? enterKeyTrigger
                       : () => console.log("key press")
                   }
@@ -183,7 +190,7 @@ const LoginForm: React.FC<
                 <Link
                   href={
                     {
-                      // pathname: "/forgot-password",
+                      pathname: "/forgot-password",
                     }
                   }
                   className="font-medium text-indigo-600 hover:text-indigo-500"
@@ -214,16 +221,27 @@ export const LoginAdditionalForm = () => {
   const [refreshToken, setRefreshToken] = useRefreshToken();
   const [userType, setUserType] = useUserType();
   const [branchPath, setBranchPath] = useBranchPath();
+  const [references, setReferences] = useReferences()
+  const [uid, setUid] = useUserId()
   const loginRequest = useApiCallBack(
     async (api, args: AccountLoginWithJWT) =>
       await api.authentication.Login(args)
   );
   const [storagePlatform, setStoragePlatform] = usePlatform();
+  const [platformSaved, setPlatformSaved] = useState<any>(null)
   const useLogin = () => {
     return useMutation((data: AccountLoginWithJWT) =>
       loginRequest.execute(data)
     );
   };
+  useEffect(() => {
+    let savedplatform;
+    const savedStoragePlatform = sessionStorage.getItem('PF')
+    if(typeof savedStoragePlatform == 'string'){
+      savedplatform = JSON.parse(savedStoragePlatform)
+    }
+    setPlatformSaved(savedplatform)
+  }, [storagePlatform])
   const router = useRouter();
   const { handleOnToast } = useToastContext();
   const { mutate } = useLogin();
@@ -233,8 +251,8 @@ export const LoginAdditionalForm = () => {
       const obj = {
         email: values.email,
         password: values.password,
-        branch: storagePlatform == "customer" ? "no-platform" : values.branch,
-        accountType: storagePlatform,
+        branch: platformSaved == "customer" ? 0 : values.branch,
+        accountType: platformSaved,
       };
       mutate(obj, {
         onSuccess: (response: any) => {
@@ -265,6 +283,19 @@ export const LoginAdditionalForm = () => {
               "dark",
               "error"
             );
+          } else if(data == 'NO_ACCOUNT_ON_THIS_BRANCH') {
+            handleOnToast(
+              "No account associated on this email",
+              "top-right",
+              false,
+              true,
+              true,
+              true,
+              undefined,
+              "dark",
+              "error"
+            );
+            setOpen(false)
           } else {
             setOpen(false);
             handleOnToast(
@@ -280,15 +311,34 @@ export const LoginAdditionalForm = () => {
             );
             setAccessToken(data?.TokenInfo.token);
             setRefreshToken(data?.TokenInfo.refreshToken);
-            setBranchPath(encrypt(data?.branchPath));
-            setUserType(encrypt(data?.usertype));
             if (data?.usertype == "employee") {
+              setBranchPath(encrypt(data?.branchPath))
+              setUserType(data?.usertype)
+              setUid(encrypt(data?.uid?.toString()))
+              setReferences(data?.references)
               router.push("/admin/dashboard");
             } else {
+              setUid(encrypt(data?.uid?.toString()))
+              setUserType(data?.usertype)
+              setReferences(data?.references)
               router.push("/customer/dashboard");
             }
           }
         },
+        onError: (error: any) => {
+          handleOnToast(
+            "Something went wrong. Please check credentials",
+            "top-right",
+            false,
+            true,
+            true,
+            true,
+            undefined,
+            "dark",
+            "error"
+          );
+          setOpen(false)
+        }
       });
     })();
   };

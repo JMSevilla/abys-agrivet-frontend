@@ -28,6 +28,8 @@ export type MultipleOption = {
   branch_id?: any;
   branchName?: string | undefined;
   branchKey?: string | undefined;
+  id?: any
+  serviceName?: string | undefined
 };
 
 export type MultipleBaseSelectFieldProps = Omit<
@@ -43,6 +45,7 @@ export type MultipleBaseSelectFieldProps = Omit<
   getValue?: (value: any) => string;
   onChange?: (...event: any[]) => void;
   multipleOptions?: MultipleOption[];
+  isMultiple?: boolean
 };
 
 export type MultipleSelectFieldProps<T extends boolean = false> =
@@ -64,6 +67,7 @@ export function MultipleSelectField<T extends boolean>({
   transformValue = (v: string) => v,
   getValue = (value: any) => value,
   multipleOptions = [],
+  isMultiple = true,
   ...rest
 }: MultipleSelectFieldProps<T>) {
   return (
@@ -75,9 +79,9 @@ export function MultipleSelectField<T extends boolean>({
           </InputLabel>
         )}
         <Autocomplete
-          multiple
+          multiple={isMultiple}
           options={multipleOptions}
-          getOptionLabel={(option: any) => option?.label ?? option?.branchName}
+          getOptionLabel={(option: any) => option?.label ?? option?.branchName ?? option.serviceName}
           disableCloseOnSelect
           onChange={(e: any, values: any) =>
             onChange?.(transformValue(values) ?? values)
@@ -94,10 +98,10 @@ export function MultipleSelectField<T extends boolean>({
           renderOption={(props, option, { selected }) => (
             <MenuItem
               {...props}
-              key={option.label ?? option.branchKey}
-              value={getValue(option.value ?? option.branch_id) ?? ""}
+              key={option.label ?? option.branchKey ?? option.serviceName}
+              value={getValue(option.value ?? option.branch_id ?? option.id) ?? ""}
             >
-              {option.label ?? option.branchName}
+              {option.label ?? option.branchName ?? option.serviceName}
               {selected ? <CheckIcon color="info" /> : null}
             </MenuItem>
           )}

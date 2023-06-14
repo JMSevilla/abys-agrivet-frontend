@@ -18,4 +18,10 @@ export class UsersApi {
     public CustomerAccountRegistration(props: AccountSetup){
         return this.axios.post('/api/implusers/customer-account-registration', props)
     }
+    public ChangePassword(props : {
+        email: string | undefined,
+        password: string | undefined
+    }){
+        return this.axios.put('/api/implusers/change-password', props)
+    }
 }

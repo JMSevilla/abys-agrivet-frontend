@@ -1,0 +1,34 @@
+import { ControlledTabs } from "@/components/Tabs/Tabs";
+import { useState } from "react";
+import { SettingsAdditionalDetails } from "./settingsForms";
+export const SettingsContent = () => {
+    const [tabsValue, setTabsValue] = useState(0)
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setTabsValue(newValue);
+    };
+    return (
+        <>
+            <ControlledTabs 
+                value={tabsValue}
+                handleChange={handleChange}
+                style={{
+                    marginTop: '10px',
+                    padding: '10px'
+                }}
+                tabsinject={
+                    [
+                        {
+                            label: 'Holidays Management'
+                        }
+                    ]
+                }
+            >
+                {
+                    tabsValue == 0 && 
+                    <SettingsAdditionalDetails />
+                }
+            </ControlledTabs>
+        </>
+    )
+}

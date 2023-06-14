@@ -22,6 +22,7 @@ import { ControlledCheckbox } from "@/components/Checkbox/Checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UAMAccountCreationAtom } from "@/utils/hooks/useAtomic";
 import { MAX_UAM_UAM_STEPS } from "..";
+import { ControlledMobileNumberField } from "@/components/TextField/MobileNumberField";
 
 
 const UAMBasicInformationForm = () => {
@@ -51,11 +52,13 @@ const UAMBasicInformationForm = () => {
         setBranch(data)
     }, [data])
     const {
-        control, watch, trigger, getValues, resetField
+        control, watch, trigger, getValues, resetField, setError
      } = useFormContext<UAMAccountType>()
     const hasNoMiddleName = watch('hasNoMiddleName')
     const hasNoMiddleNamePreviousValue = usePreviousValue(hasNoMiddleName)
+    const mobileNumber = watch('phoneNumber')
     const branchValue = watch('branch')
+    const phoneNumberRegex = /^(\+?63|0)9\d{9}$/;
     useEffect(() => {
         resetField('middlename')
         if(hasNoMiddleNamePreviousValue){
@@ -64,7 +67,14 @@ const UAMBasicInformationForm = () => {
         
 
     }, [hasNoMiddleName, hasNoMiddleNamePreviousValue, resetField, trigger])
-    
+    useEffect(() => {
+        const values = getValues()
+        if(phoneNumberRegex.test(values.phoneNumber)){
+            return;
+        }else{
+            setError('phoneNumber', { message: 'Invalid phone number'})
+        }
+    }, [mobileNumber])
     useEffect(() => {
         const values = getValues()
         const newArrayAccessLevel: Array<{
@@ -130,7 +140,7 @@ const UAMBasicInformationForm = () => {
                 </Grid>
             </ControlledGrid>
             <ControlledGrid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                     <ControlledTextField 
                     control={control}
                     name='username'
@@ -139,7 +149,16 @@ const UAMBasicInformationForm = () => {
                     shouldUnregister
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
+                <ControlledMobileNumberField 
+                        control={control}
+                        name='phoneNumber'
+                        required
+                        shouldUnregister
+                        label="Mobile Number"
+                    />
+                </Grid>
+                <Grid item xs={3}>
                     <ControlledSelectField 
                     control={control}
                     name='branch'
@@ -149,7 +168,7 @@ const UAMBasicInformationForm = () => {
                     options={branch}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={3}>
                 <ControlledSelectField 
                     control={control}
                     name='access_level'

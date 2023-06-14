@@ -1,7 +1,7 @@
 export const setItem = <T>(key: string, value: T) => {
     try {
         if(typeof window !== 'undefined'){
-            window.localStorage.setItem(key, JSON.stringify(value))
+            window.sessionStorage.setItem(key, JSON.stringify(value))
         }
     } catch (error) {
         console.log(error)
@@ -11,7 +11,7 @@ export const setItem = <T>(key: string, value: T) => {
 export const getItem = <T>(key: string): T | undefined => {
     try {
         if(typeof window !== 'undefined'){
-            const item = window.localStorage.getItem(key)
+            const item = window.sessionStorage.getItem(key)
             return item ? JSON.parse(item) : undefined
         }
     } catch (error) {
@@ -23,7 +23,7 @@ export const getItem = <T>(key: string): T | undefined => {
 export const removeItem = (key: string) => {
     try {
         if(typeof window !== 'undefined'){
-            window.localStorage.removeItem(key)
+            window.sessionStorage.removeItem(key)
         }
     } catch (error) {
         console.log(error)        
@@ -32,6 +32,6 @@ export const removeItem = (key: string) => {
 
 export const clear = () => {
     if(typeof window !== 'undefined') {
-        window.localStorage.clear()
+        window.sessionStorage.clear()
     }
 }

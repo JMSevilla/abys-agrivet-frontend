@@ -46,7 +46,8 @@ const AdministratorAccountSetupForm = () => {
          hasNoMiddleName, hasNoMiddleNamePreviousValue, resetField, trigger
     ])
     const passwordHasValue = watch('password')
-    useEffect(() => {}, [passwordHasValue])
+    useEffect(() => {
+    }, [passwordHasValue])
     useEffect(() => {
         const values = getValues()
         if(phoneNumberRegex.test(values.phoneNumber)){
@@ -132,7 +133,7 @@ const AdministratorAccountSetupForm = () => {
                     type='password'
                     shouldUnregister
                     />
-                    <PasswordStrengthMeter result={result} />
+                    <PasswordStrengthMeter result={result} password={getValues().password} />
                 </Grid>
                 <Grid item xs={6}>
                 <ControlledTextField 
@@ -176,17 +177,7 @@ export const AdministratorAccountSetupFormAdditional = () => {
         handleSubmit, getValues, setError
     } = form
     const router = useRouter()
-    const result = zxcvbn(getValues().password == undefined ? "" : getValues().password)
-    const checkPasswordErrors = () => {
-        const values = getValues()
-        if(!values.password) return;
-        if(!(result.score > 2)) {
-            setError('password', { message : 'Password strength has an error.'})
-        }
-    }
-    useEffect(() => {
-        checkPasswordErrors()
-    }, [result])
+    
     useEffect(() => {
         setupCheckUsersDB({location : "admin-account-setup"})
     }, [])
@@ -206,7 +197,6 @@ export const AdministratorAccountSetupFormAdditional = () => {
                     branch: 6
                 }
                 setAdminAtom(values)
-                console.log(obj)
                 mutate(obj, {
                     onSuccess: (response: any) => {
                         const { data } : any = response;

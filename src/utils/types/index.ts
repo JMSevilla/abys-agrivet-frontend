@@ -1,4 +1,5 @@
 import React from "react";
+import { Tenant } from "../context/HelperContext/HelperContext";
 
 export type ToastContextSetup = {
   handleOnToast: (
@@ -61,6 +62,7 @@ export type NavigationProps = {
   token?: string;
   signout?: any;
   signoutModal: any;
+  globals: Tenant | null
 };
 
 export type DashboardLayoutProps = {
@@ -96,6 +98,7 @@ export type AdminSidebarProps = {
   DrawerHeader: any;
   sidebarConfig: SidebarTypes[];
   subsidebarConfig?: SubSidebarTypes[] | undefined;
+  globals: Tenant | null
 };
 
 /**
@@ -155,3 +158,32 @@ export type TableSearchProps = {
   id: any;
   serviceName: string | undefined;
 };
+
+
+// create new schedule
+
+export type CreateNewScheduleProps = {
+  userid: number
+  branch: number
+  mockSchedule: string | undefined
+  status: number
+  isHoliday: any
+  start: Date
+  title: string | undefined
+}
+
+// create new appointment
+
+export type CreateNewAppointment = {
+  email: string | undefined
+  phoneNumber: string | undefined
+  fullName: string | undefined
+  branch_id: number
+  service_id: string | undefined
+  petInfo: string | undefined
+  appointmentSchedule: string | undefined
+  status: number
+  isWalkedIn: number
+  notify?: number
+  reminderType: number
+}

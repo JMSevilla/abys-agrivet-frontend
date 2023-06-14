@@ -8,7 +8,7 @@ export const adminBaseSchema = z.object({
     email: requiredString('Your email is required').email(),
     username: requiredString('Your username is required.'),
     phoneNumber: requiredString("Your phone number is required."),
-    password: requiredString('Your password is required'),
+    password: requiredString('Your password is required').min(8).max(64),
     conpassword: requiredString('Please confirm your password'),
     branch: z.string().optional()
 })
@@ -27,7 +27,11 @@ export const schema = z.discriminatedUnion('hasNoMiddleName', [
       return password === conpassword;
     },
     { path: ["conpassword"], message: "Password did not match" }
-  );
+  ).refine((data) => {
+    const hasSpecialCharacter = /[!@#$%^&*()_+]/.test(data.password);
+    const hasUpperCase = /[A-Z]/.test(data.password);
+    return hasSpecialCharacter && hasUpperCase;
+  }, { path: ['password'], message : 'Password must contain at least one special character and one upper case letter'})
 
 export type AdministratorAccountType = z.infer<typeof schema>
 

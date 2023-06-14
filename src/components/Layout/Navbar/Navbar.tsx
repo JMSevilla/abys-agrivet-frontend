@@ -27,6 +27,7 @@ const DashboardNavigation: React.FC<NavigationProps> = (props) => {
         token,
         signout,
         signoutModal,
+        globals
       } = props;
       const [anchorEl, setAnchorEl] = useState(null)
       const logout = Boolean(anchorEl);
@@ -54,7 +55,9 @@ const DashboardNavigation: React.FC<NavigationProps> = (props) => {
                     </IconButton>
                     <Box className="flex items-center justify-between w-full">
                         <h3 className="text-2xl font-medium font-body text-white">
-                            Administrator
+                            {
+                              globals?.storedType == 'employee' ? 'Administrator' : 'Customer' 
+                            }
                         </h3>
                         <Box className="flex item-center gap-3">
                         <Avatar

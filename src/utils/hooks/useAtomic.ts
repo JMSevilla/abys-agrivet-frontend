@@ -17,6 +17,9 @@ import {
   BranchType,
 } from "../schema/Branch/BranchSchema";
 import { ServiceCreation } from "../schema/Services/ServiceSchema";
+import { AppointmentPetInformationType, AppointmentSchedulingType, AppointmentServiceType, AppointmentType } from "../schema/Appointment/AppointmentSchema";
+import { FPAccountType, FPNewPasswordType, baseVerificationType } from "../schema/Account/ForgotPasswordSchema";
+import { HolidayPickType, HolidayTitleType } from "../schema/Appointment/HolidaySchema";
 export const AdministratorAccountCreationAtom = atom<
   AdministratorAccountType | undefined
 >(undefined);
@@ -56,3 +59,21 @@ export const BranchModificationAtom = atom<BranchModificationType | undefined>(
 );
 
 export const ServiceAtom = atom<ServiceCreation | undefined>(undefined);
+
+export const AppointmentAtom = atom<AppointmentType | undefined>(undefined)
+
+export const AppointmentServicesAtom = atom<AppointmentServiceType | undefined>(undefined)
+
+export const AppointmentPetInformationAtom = atom<AppointmentPetInformationType | undefined>(undefined)
+
+export const AppointmentSchedulingAtom = atom<AppointmentSchedulingType | undefined>(undefined)
+
+export const FPAtom = atom<FPAccountType | undefined>(undefined)
+
+export const FPVerificationCode = atom<baseVerificationType | undefined>(undefined)
+
+export const FPNewPasswordAtom = atom<FPNewPasswordType | undefined>(undefined)
+
+export const HolidayTitleAtom = atom<HolidayTitleType | undefined>(undefined)
+
+export const HolidayPickAtom = atom<HolidayPickType | undefined>(undefined)

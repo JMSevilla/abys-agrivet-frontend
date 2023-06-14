@@ -8,11 +8,12 @@ import MuiAppBar from "@mui/material/AppBar";
 import { useState, useEffect } from 'react'
 import { useApiCallBack } from "@/utils/hooks/useApi";
 import { useRouter } from "next/router";
-import { useAccessToken, useBranchPath, usePlatform, useRefreshToken } from "@/utils/hooks/useToken";
+import { useAccessToken, useBranchPath, usePlatform, useReferences, useRefreshToken, useUserId, useUserType } from "@/utils/hooks/useToken";
 import { useToastContext } from "@/utils/context/Toast/ToastContext";
 import { SidebarTypes, SubSidebarTypes } from "@/utils/types";
-import { sidebarList } from "./Sidebar/SidebarConfig";
+import { sidebarCustomerList, sidebarList } from "./Sidebar/SidebarConfig";
 import ControlledModal from "../Modal/Modal";
+import { useGlobalsContext } from "@/utils/context/HelperContext/HelperContext";
 
 type DashboardLayoutProps = {
     children: React.ReactNode
@@ -93,20 +94,23 @@ const Drawer = styled(MuiDrawer, {
     const [dropDown, setDropDown] = useState(false);
     const router = useRouter()
     const [sidebarStateConfig , setSidebarStateConfig] = useState<any>(sidebarList)
+    const [sidebarCustomerConfig, setSidebarCustomerConfig] = useState<any>(sidebarCustomerList)
     const [modalOpen, setModalOpen] = useState(false)
-    
+    const { globals } = useGlobalsContext()
     const [accessToken, setAccessToken, clearAccessToken] = useAccessToken()
     const [refreshToken, setRefreshToken, clearRefreshToken] = useRefreshToken()
     const [branchPath, setBranchPath, clearBranchPath] = useBranchPath()
     const [platform, setPlatform, clearPlatform] = usePlatform()
-
+    const [userType, setUserType, clearUserType] = useUserType()
+    const [ref, setRef, clearRef] = useReferences()
+    const [uid, setuid, clearuid] = useUserId()
     useEffect(() => {
         window.addEventListener('resize', () => {
             return window.innerWidth < 1024 ? setOpen(false) : setOpen(!open)
         })
     })
     const handleClick = (outerIndex: any, innerIndex: any) => {
-    let newArray = sidebarStateConfig
+    let newArray = globals?.storedType == 'employee' ? sidebarStateConfig : sidebarCustomerConfig
     const outerArray = [...newArray]
     const innerArray = outerArray[outerIndex]
     innerArray.dropDownChildren[innerIndex] = {...innerArray?.dropDownChildren[innerIndex], dropDown: !innerArray.dropDownChildren[innerIndex].dropDown}
@@ -124,6 +128,9 @@ const Drawer = styled(MuiDrawer, {
       clearBranchPath()
       clearPlatform()
       clearRefreshToken()
+      clearUserType()
+      clearRef()
+      clearuid()
       router.push('/')
     }
     const handleSignoutModal = () => {
@@ -137,8 +144,10 @@ const Drawer = styled(MuiDrawer, {
             handleDrawerOpen={handleDrawerOpen}
             ApplicationBar={AppBar}
             signoutModal={handleSignoutModal}
+            globals={globals}
             />
             <DashboardSidebar 
+            globals={globals}
             open={open}
             handleDrawerClose={handleDrawerClose}
             theme={theme}
