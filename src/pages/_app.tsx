@@ -4,18 +4,21 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import type { AppProps } from "next/app";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { ReactElement, ReactNode, useState } from "react";
 import { CssBaseline } from "@mui/material";
 import "./index.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
+import 'react-date-range/dist/styles.css'; // main css file
+import 'react-date-range/dist/theme/default.css';
 import "@/components/PasswordStrengthMeter/PasswordStrengthMeter.css";
 import {
   sidebarList,
   sidebarExpand,
   sidebarCustomerExpand,
-  sidebarCustomerList
+  sidebarCustomerList,
+  sidebarManagersList,
+  sidebarManagersExpand
 } from "@/components/Layout/Sidebar/SidebarConfig";
 import { SetupProvider } from "@/utils/context/SetupContext/SetupContext";
 import ToastContext from "@/utils/context/Toast/ToastContext";
@@ -30,7 +33,11 @@ import { UserProvider } from "@/utils/context/UserContext/UserContext";
 import { ControlledBackdrop } from "@/components";
 import { GlobalsProvider } from "@/utils/context/HelperContext/HelperContext";
 import "react-quill/dist/quill.snow.css";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
+/**@deprecated this library has no good UI */
+// import "react-datepicker/dist/react-datepicker.css";
 export type NextPageWithLayout<P = any, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -46,13 +53,15 @@ const theme = createTheme({
 });
 const queryClient = new QueryClient({});
 
+
+
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const [accessToken, setAccessToken] = useAccessToken();
   const [userType, setUserType] = useUserType();
   const [loading, setLoading] = useState(false);
   const [storedValue, setStoredValue] = useState<string | undefined>(undefined);
-  const [storedType, setStoredType] = useState<string | undefined>(undefined);
+  const [storedType, setStoredType] = useState<number | undefined>(undefined);
   useRefreshTokenHandler();
   useEffect(() => {
     setLoading(!loading);
@@ -78,9 +87,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       setStoredType(savedUserType);
     }
   }, [accessToken, userType]);
+
+
   return (
     <>
-      <GlobalsProvider globals={{storedValue : storedValue, storedType: storedType}}>
+       <GlobalsProvider globals={{storedValue : storedValue, storedType: storedType}}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
@@ -100,15 +111,18 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                     pauseOnHover
                     theme="dark"
                   />
-                  {loading && !storedValue ? (
+                  <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  >
+                    {loading && !storedValue ? (
                     <ControlledBackdrop open={loading} />
                   ) : storedValue ? (
                     <DashboardLayout
                       sidebarConfig={
-                        storedType == "employee" ? sidebarList : sidebarCustomerList
+                        storedType == 1 ? sidebarList : storedType == 2 ? sidebarManagersList : sidebarCustomerList
                       }
                       subsidebarConfig={
-                        storedType == "employee" ? sidebarExpand : sidebarCustomerExpand
+                        storedType == 1 ? sidebarExpand : storedType == 2 ? sidebarManagersExpand : sidebarCustomerExpand
                       }
                     >
                       {getLayout(<Component {...pageProps} />)}
@@ -116,6 +130,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                   ) : (
                     <>{getLayout(<Component {...pageProps} />)}</>
                   )}
+                  </LocalizationProvider>
                 </UserProvider>
               </AuthenticationProvider>
             </ToastContext>
@@ -126,3 +141,5 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     </>
   );
 }
+
+

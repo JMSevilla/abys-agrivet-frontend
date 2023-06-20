@@ -311,17 +311,24 @@ export const LoginAdditionalForm = () => {
             );
             setAccessToken(data?.TokenInfo.token);
             setRefreshToken(data?.TokenInfo.refreshToken);
-            if (data?.usertype == "employee") {
+            if (data?.usertype == 1) {
               setBranchPath(encrypt(data?.branchPath))
               setUserType(data?.usertype)
               setUid(encrypt(data?.uid?.toString()))
               setReferences(data?.references)
-              router.push("/admin/dashboard");
-            } else {
+              router.push(data?.branchPath);
+            } else if(data?.usertype == 3) {
               setUid(encrypt(data?.uid?.toString()))
               setUserType(data?.usertype)
               setReferences(data?.references)
+              setBranchPath(encrypt("/customer/dashboard"))
               router.push("/customer/dashboard");
+            } else {
+              setBranchPath(encrypt(data?.branchPath))
+              setUid(encrypt(data?.uid?.toString()))
+              setUserType(data?.usertype)
+              setReferences(data?.references)
+              router.push(data?.branchPath);
             }
           }
         },

@@ -15,11 +15,7 @@ export const PasswordStrengthMeter = (props: Props) => {
   };
   zxcvbnOptions.setOptions(options);
   const createPasswordLabel = (result: any) => {
-    if(!/[!@#$%^&*()_+]/.test(password) && !/[A-Z]/.test(password)){
-      result.score = 0
-      return "Weak"
-    } else {
-switch (result.score) {
+    switch (result.score) {
       case 0:
         return "Weak";
       case 1:
@@ -32,7 +28,6 @@ switch (result.score) {
         return "Strong";
       default:
         return "Weak";
-    }
     }
     
   };

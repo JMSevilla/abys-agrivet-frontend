@@ -3,6 +3,7 @@ import { useActiveSteps } from '@/utils/hooks/useActiveStep'
 import { OnboardingStepper } from '@/components/Stepper/Stepper'
 import { HolidayTitle } from './SettingsHolidayTitleForm'
 import { SettingsHolidayPickBranch } from './SettingsHolidayPickBranch'
+import { SettingsHolidayStartEnd } from './SettingsHolidayStartEnd'
 const SETTINGS_MAP : Array<{label: string, form: React.FC}> = [
     {
         label: 'Holiday title',
@@ -11,6 +12,10 @@ const SETTINGS_MAP : Array<{label: string, form: React.FC}> = [
     {
         label: 'Settings Holiday Pick Branch', 
         form: SettingsHolidayPickBranch
+    },
+    {
+        label: 'Settings Holiday Start End',
+        form: SettingsHolidayStartEnd
     }
 ]
 

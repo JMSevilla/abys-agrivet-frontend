@@ -17,6 +17,7 @@ type ModalProps = {
   color?: any;
   maxWidth?: any;
   disabled?: boolean;
+  hideAgreeButton?: boolean
 };
 
 const ControlledModal: React.FC<ModalProps> = ({
@@ -31,6 +32,7 @@ const ControlledModal: React.FC<ModalProps> = ({
   color,
   maxWidth,
   disabled,
+  hideAgreeButton
 }) => {
   return (
     <>
@@ -58,18 +60,20 @@ const ControlledModal: React.FC<ModalProps> = ({
           >
             {buttonTextDecline}
           </Button>
+          {!hideAgreeButton && 
           <Button
-            sx={{
-              display: buttonTextAccept == "NO-BTN" ? "none" : "",
-            }}
-            disabled={disabled}
-            variant="outlined"
-            color={color}
-            onClick={handleSubmit}
-            autoFocus
-          >
-            {buttonTextAccept}
-          </Button>
+          sx={{
+            display: buttonTextAccept == "NO-BTN" ? "none" : "",
+          }}
+          disabled={disabled}
+          variant="outlined"
+          color={color}
+          onClick={handleSubmit}
+          autoFocus
+        >
+          {buttonTextAccept}
+        </Button>}
+          
         </DialogActions>
       </Dialog>
     </>

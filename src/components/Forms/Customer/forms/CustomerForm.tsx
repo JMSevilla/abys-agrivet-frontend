@@ -235,6 +235,7 @@ export const CustomerAccountFormAdditional = () => {
         },
       });
     })();
+    return false
   };
   return (
     <FormProvider {...form}>

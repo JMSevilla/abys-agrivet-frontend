@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import MenuIcon from "@mui/icons-material/Menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { useReferences } from "@/utils/hooks/useToken";
 
 const DashboardNavigation: React.FC<NavigationProps> = (props) => {
     const {
@@ -37,6 +38,17 @@ const DashboardNavigation: React.FC<NavigationProps> = (props) => {
       const handleClick = (event: any) => {
         setAnchorEl(event.currentTarget);
       };
+      const [references, setReferences] = useReferences()
+      const branchIdentifier = (branch_id: number) => {
+        switch(branch_id){
+            case 1:
+                return 'Palo-Alto Calamba City, Laguna'
+            case 2: return 'Halang Calamba City, Laguna'
+            case 3: return 'Tambo Lipa City, Batangas'
+            case 4: return 'Sabang Lipa City, Batangas'
+            case 5: return 'Batangas City'
+        }
+    }
     return (
         <>
             <ApplicationBar position="fixed" open={open}>
@@ -56,7 +68,7 @@ const DashboardNavigation: React.FC<NavigationProps> = (props) => {
                     <Box className="flex items-center justify-between w-full">
                         <h3 className="text-2xl font-medium font-body text-white">
                             {
-                              globals?.storedType == 'employee' ? 'Administrator' : 'Customer' 
+                              globals?.storedType == 1 ? 'Administrator' : globals?.storedType == 2 ? 'Manager' + " / Branch : " + " " + branchIdentifier(references?.branch) : 'Customer' 
                             }
                         </h3>
                         <Box className="flex item-center gap-3">

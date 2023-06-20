@@ -32,7 +32,6 @@ export const MAX_CUSTOMER_STEPS = CUSTOMER_MAP.length;
 export const CustomerFormAdditionalDetails = () => {
   const { activeStep } = useActiveSteps(MAX_CUSTOMER_STEPS);
   const { form: ActiveForm } = CUSTOMER_MAP[activeStep];
-
   return (
     <>
       <OnboardingStepper
@@ -42,7 +41,7 @@ export const CustomerFormAdditionalDetails = () => {
           "Customer Details & Credentials",
           "Choose Verification Type",
           "Account Verification",
-          "Completed",
+          "Completed"
         ]}
       />
       <Box mt={2} width="100%">

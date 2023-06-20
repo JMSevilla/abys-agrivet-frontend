@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { useAccessToken, useBranchPath, usePlatform, useReferences, useRefreshToken, useUserId, useUserType } from "@/utils/hooks/useToken";
 import { useToastContext } from "@/utils/context/Toast/ToastContext";
 import { SidebarTypes, SubSidebarTypes } from "@/utils/types";
-import { sidebarCustomerList, sidebarList } from "./Sidebar/SidebarConfig";
+import { sidebarCustomerList, sidebarList, sidebarManagersList } from "./Sidebar/SidebarConfig";
 import ControlledModal from "../Modal/Modal";
 import { useGlobalsContext } from "@/utils/context/HelperContext/HelperContext";
 
@@ -94,6 +94,7 @@ const Drawer = styled(MuiDrawer, {
     const [dropDown, setDropDown] = useState(false);
     const router = useRouter()
     const [sidebarStateConfig , setSidebarStateConfig] = useState<any>(sidebarList)
+    const [sidebarManagersStateConfig, setSidebarManagersStateConfig] = useState<any>(sidebarManagersList)
     const [sidebarCustomerConfig, setSidebarCustomerConfig] = useState<any>(sidebarCustomerList)
     const [modalOpen, setModalOpen] = useState(false)
     const { globals } = useGlobalsContext()
@@ -110,12 +111,18 @@ const Drawer = styled(MuiDrawer, {
         })
     })
     const handleClick = (outerIndex: any, innerIndex: any) => {
-    let newArray = globals?.storedType == 'employee' ? sidebarStateConfig : sidebarCustomerConfig
+    let newArray = globals?.storedType == 1 ? sidebarStateConfig : globals?.storedType == 2 ? sidebarManagersStateConfig : sidebarCustomerConfig
     const outerArray = [...newArray]
     const innerArray = outerArray[outerIndex]
     innerArray.dropDownChildren[innerIndex] = {...innerArray?.dropDownChildren[innerIndex], dropDown: !innerArray.dropDownChildren[innerIndex].dropDown}
     outerArray[outerIndex] = innerArray
-    setSidebarStateConfig([...newArray, ...outerArray])
+    if(globals?.storedType == 1){
+      setSidebarStateConfig([...newArray, ...outerArray])
+    } else if(globals?.storedType == 2) {
+      setSidebarManagersStateConfig([...newArray, ...outerArray])
+    } else {
+      setSidebarCustomerConfig([...newArray, ...outerArray])
+    }
     }
     const handleDrawerOpen = () => {
         setOpen(!open)

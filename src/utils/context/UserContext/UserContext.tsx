@@ -18,7 +18,7 @@ export const UserProvider: React.FC<React.PropsWithChildren<{}>> = ({
         FetchAllUAM.execute().then(response => {
             setUsers(response.data)
         }).catch((err) => {
-            localStorage.clear()
+            sessionStorage.clear()
                 router.push('/platform')
         })
     }, [])

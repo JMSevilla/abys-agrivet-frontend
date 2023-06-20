@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { BranchProps, CreateNewAppointment, CreateNewScheduleProps, SMSVerificationProps } from "@/utils/types";
+import { BranchProps, CreateNewAppointment, CreateNewFollowUpAppointment, CreateNewScheduleProps, SMSVerificationProps } from "@/utils/types";
 export class AbysApi {
   constructor(private readonly axios: AxiosInstance) {}
 
@@ -81,5 +81,55 @@ export class AbysApi {
   }
   public getAllReminders(){
     return this.axios.get('/api/implappointment/check-reminder')
+  }
+  public findAffectedSchedules(props : {
+    start: Date,
+    end: Date
+  }){
+    return this.axios.get(`/api/implappointment/check-affected-schedules/${props.start}/${props.end}`)
+  }
+  public postNewHoliday(props: CreateNewScheduleProps){
+    return this.axios.post('/api/implappointment/post-new-holiday', props)
+  }
+  public CheckIfDayPropIsHoliday(id: number){
+    return this.axios.get(`/api/implappointment/check-if-holiday/${id}`)
+  }
+  public removeAffectedSchedules(props: {
+    id: number,
+    userid: number
+  }) {
+    return this.axios.delete(`/api/implappointment/remove-affected-schedules/${props.id}/${props.userid}`)
+  }
+  public getAllAppointmentPerBranch(branchId: number) {
+    return this.axios.get(`/api/implappointment/get-all-appointments-per-branch/${branchId}`)
+  }
+  public createNewFollowAppointment(props: CreateNewFollowUpAppointment){
+    return this.axios.post('/api/implappointment/create-follow-up-appointment', props)
+  }
+  public checkAppointmentIfDone(){
+    return this.axios.get('/api/implappointment/check-appointment-if-done')
+  }
+  public appointmentSessionActions(props : {
+    actions: string | undefined,
+    id: number,
+    managerUid: number
+  }){
+    return this.axios.put(`/api/implappointment/appointment-session-actions`, props)
+  }
+  public GetSessionUser(manageruid: number){
+    return this.axios.get(`/api/implappointment/get-assigned-user-session/${manageruid}`)
+  }
+  public MakeAppointmentDone(id: number) {
+    return this.axios.put(`/api/implappointment/appointment-make-it-done/${id}`)
+  }
+  public FollowUpAppointmentList(id: number) {
+    return this.axios.get(`/api/implappointment/follow-up-appointments-list/${id}`)
+  }
+  public SearchEngineFollowUpAppointment(props : {
+    start: any,
+    end: any,
+    customerName: string | undefined
+  }) {
+    return this.axios.get(`/api/implappointment/search-follow-up-appointments/${props.start}/${props.end}/${props.customerName}`)
   }
 }

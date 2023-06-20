@@ -110,6 +110,7 @@ export type ProjectTableProps = {
   sx?: any;
   columns: any;
   rowIsCreativeDesign?: boolean;
+  loading?: boolean
 };
 
 /**
@@ -186,4 +187,20 @@ export type CreateNewAppointment = {
   isWalkedIn: number
   notify?: number
   reminderType: number
+}
+
+// type for create new follow up appointment
+
+export type CreateNewFollowUpAppointment = {
+  title: string | undefined
+  customerName: string | undefined
+  branch_id: number
+  followupServices: any
+  followupDescription: string | undefined
+  start: Date
+  end: Date
+  notificationType: string | undefined
+  diagnosis: string | undefined
+  treatment: string | undefined
+  isHoliday: number
 }

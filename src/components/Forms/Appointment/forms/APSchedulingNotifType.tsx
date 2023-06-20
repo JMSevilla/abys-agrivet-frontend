@@ -49,7 +49,9 @@ import { useReferences } from "@/utils/hooks/useToken";
                     status: 1,
                     isWalkedIn: 0,
                     notify: 0,
-                    reminderType: 1
+                    reminderType: 1,
+                    isSessionStarted: 0,
+                    managersId: 0
                 }
                 useCreateNewAppointment.mutate(obj, {
                     onSuccess: (response) => {

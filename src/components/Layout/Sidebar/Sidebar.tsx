@@ -223,7 +223,7 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
             <Divider className="bg-sideBarTabHover" />
             <List>
               {
-                globals?.storedType == 'employee' && 
+                globals?.storedType == 1 && 
                 sidebarSettingsArea?.length > 0 &&
                 sidebarSettingsArea.map((item, index) => (
                   <Box className="flex flex-col items-center">

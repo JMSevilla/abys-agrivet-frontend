@@ -9,7 +9,7 @@ type ContextValue = {
 
 export type Tenant = {
     storedValue: string | undefined
-    storedType: string | undefined
+    storedType: number | undefined
 }
 
 interface Props {

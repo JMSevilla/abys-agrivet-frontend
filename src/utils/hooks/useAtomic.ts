@@ -19,7 +19,8 @@ import {
 import { ServiceCreation } from "../schema/Services/ServiceSchema";
 import { AppointmentPetInformationType, AppointmentSchedulingType, AppointmentServiceType, AppointmentType } from "../schema/Appointment/AppointmentSchema";
 import { FPAccountType, FPNewPasswordType, baseVerificationType } from "../schema/Account/ForgotPasswordSchema";
-import { HolidayPickType, HolidayTitleType } from "../schema/Appointment/HolidaySchema";
+import { HolidayPickType, HolidayStartEndType, HolidayTitleType } from "../schema/Appointment/HolidaySchema";
+import { RecommendationsType } from "../schema/Appointment/RecommendationsAppointment";
 export const AdministratorAccountCreationAtom = atom<
   AdministratorAccountType | undefined
 >(undefined);
@@ -77,3 +78,7 @@ export const FPNewPasswordAtom = atom<FPNewPasswordType | undefined>(undefined)
 export const HolidayTitleAtom = atom<HolidayTitleType | undefined>(undefined)
 
 export const HolidayPickAtom = atom<HolidayPickType | undefined>(undefined)
+
+export const HolidayStartEndAtom = atom<HolidayStartEndType | undefined>(undefined)
+
+export const RecommendationsAtom = atom<RecommendationsType | undefined>(undefined)

@@ -1,6 +1,6 @@
 import { ControlledTabs } from "@/components/Tabs/Tabs";
 import { useState } from "react";
-import { SettingsAdditionalDetails } from "./settingsForms";
+import { SettingsAdditionalDetails } from "./forms";
 export const SettingsContent = () => {
     const [tabsValue, setTabsValue] = useState(0)
 
@@ -19,7 +19,7 @@ export const SettingsContent = () => {
                 tabsinject={
                     [
                         {
-                            label: 'Holidays Management'
+                            label: 'Holidays / Closing Management'
                         }
                     ]
                 }

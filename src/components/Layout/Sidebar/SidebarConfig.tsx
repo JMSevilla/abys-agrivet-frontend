@@ -10,6 +10,8 @@ import EventNoteIcon from '@mui/icons-material/EventNote'
 import CreateIcon from '@mui/icons-material/Create';
 import PreviewIcon from '@mui/icons-material/Preview';
 
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
 type sidebarProps = {
   objectID: number;
   name: string;
@@ -252,4 +254,27 @@ export const sidebarCustomerExpand: sidebarExpandProps[] = [
       },
     ],
   }
+]
+
+export const sidebarManagersList: sidebarProps[] = [
+  {
+    objectID: 1,
+    name: 'Managers',
+    title: 'Manager Overview',
+    dropDown: false,
+    uri: '/managers/dashboard',
+    icon: <AssessmentIcon className="text-white" />
+  },
+  {
+    objectID: 2,
+    name: 'Appointments',
+    title: 'Appointments',
+    dropDown: false,
+    uri: '/managers/appointments',
+    icon: <CalendarMonthIcon className="text-white" />
+  }
+]
+
+export const sidebarManagersExpand: sidebarExpandProps[] = [
+
 ]

@@ -21,8 +21,6 @@ import { Container, Grid, Typography } from "@mui/material";
 import { UncontrolledCard } from "@/components/Card/Card";
 import { NormalButton } from "@/components/Button/NormalButton";
 import { ControlledGrid } from "@/components/Grid/Grid";
-import { usePreviousValue } from "@/utils/hooks/usePreviousValue";
-import { ControlledCheckbox } from "@/components/Checkbox/Checkbox";
 
 const PetInformationForm = () => {
     const {

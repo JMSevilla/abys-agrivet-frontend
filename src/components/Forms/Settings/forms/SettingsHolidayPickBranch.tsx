@@ -12,6 +12,8 @@ import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { useQuery } from "react-query";
 import { MAX_SETTINGS_STEPS } from ".";
 import { useActiveSteps } from "@/utils/hooks/useActiveStep";
+import RadioGroupForm from "@/components/GroupRadio/RadioGroupButton";
+import { UncontrolledCard } from "@/components/Card/Card";
 
 const SettingsHolidayPickBranchForm = () => {
     const { control } = useFormContext<HolidayPickType>()
@@ -38,6 +40,21 @@ const SettingsHolidayPickBranchForm = () => {
                 required
                 shouldUnregister
                 />
+                <UncontrolledCard style={{marginTop: '10px'}}>
+                <RadioGroupForm 
+                control={control}
+                name='value'
+                label="Select if it is holiday or store closing"
+                options={[
+                    {
+                        value: 'closed', label: 'Store Closing'
+                    },
+                    {
+                        value: 'holiday', label: 'Holiday'
+                    }
+                ]}
+                />
+                </UncontrolledCard>
             </Grid>
             <Grid item xs={4}></Grid>
         </ControlledGrid>
@@ -60,10 +77,10 @@ export const SettingsHolidayPickBranch = () => {
     const { next } = useActiveSteps(MAX_SETTINGS_STEPS)
     const handleContinue = () => {
         handleSubmit((values) => {
-            console.log(values)
             setPick(values)
             next()
-        })
+        })()
+        return false;
     }
     return (
         <FormProvider {...form}>

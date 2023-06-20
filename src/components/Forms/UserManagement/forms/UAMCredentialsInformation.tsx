@@ -144,23 +144,6 @@ export const UAMCredentialsInformation = () => {
                             lookAllUsersFromUAM()
                             next()
                         }
-                    },
-                    onError: (error : any) => {
-                        console.log(error)
-                        // handleOnToast(
-                        //     "Something went wrong",
-                        //     "top-right",
-                        //     false,
-                        //     true,
-                        //     true,
-                        //     true,
-                        //     undefined,
-                        //     "dark",
-                        //     "error"
-                        // );
-                        // setLoading(false)
-                        // localStorage.clear()
-                        // router.push('/platform')
                     }
                 })
             }

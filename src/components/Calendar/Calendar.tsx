@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import schedule from "@/utils/config/schedule";
 import 'moment-timezone'
+import { useApiCallBack } from "@/utils/hooks/useApi";
 const localizer = momentLocalizer(moment)
 type CalendarProps = {
   handleSelection: ({start, end} : any) => void;
@@ -32,36 +33,12 @@ export const SchedulerCalendar = (props: CalendarProps) => {
     views,
     handleSelectedEvent
   } = props;
-  const [eventsData, setEventsData] = useState<any>(schedule);
-  const [holidayDates, setHolidayDates] = useState<CalendarEvents[]>([
-    // {
-    //   id:1,
-    //   title: 'test',
-    //   start: new Date(),
-    //   end: new Date(),
-    //   isHoliday: false
-    // }
-  ])
-  const handleSelect = ({ start, end } : any) => {
-    const eventStartDate = new Date(start)
-    if(eventStartDate < new Date() && !moment(start).isSame(moment(), 'day')) {
-      return;
-    }
-    else {
-      const title = window.prompt("New Event name");
-    if (title)
-      setEventsData([
-        ...eventsData,
-        {
-          start,
-          end,
-          title
-        }
-      ]);
-    }
-  };
   const eventPropGetter: EventPropGetter<CalendarEvents> = (event) => {
-    
+    const closedCaseSensitive = event.title.toLowerCase()
+    const closedIncludes = closedCaseSensitive.includes("closing")
+    || closedCaseSensitive.includes("closed") || closedCaseSensitive.includes("store closed")
+    || closedCaseSensitive.includes("store closing")
+    /**@condition do more conditions if necessary. so it will check every title */
     const eventStartDate = new Date(event.start)
     const isPastDate = eventStartDate < new Date()
     let eventStyle: React.CSSProperties = {}
@@ -77,7 +54,14 @@ export const SchedulerCalendar = (props: CalendarProps) => {
         color: 'white',
         cursor: 'not-allowed'
       }
+    } else if(closedIncludes) {
+      eventStyle = {
+        backgroundColor: 'orange',
+        color: 'white',
+        cursor: 'not-allowed'
+      }
     }
+    /**@fires createConditionForTitleClosing */
     return {
       className: isPastDate ? 'past-date' : '',
       style: eventStyle
@@ -85,10 +69,10 @@ export const SchedulerCalendar = (props: CalendarProps) => {
   }
   
   const dayPropGetter: DayPropGetter = (date) => {
-    const isHoliday = holidayDates.some((holiday: any) => 
-      moment(holiday).isSame(moment(date), 'day')
+    const dateString = moment(date).format('YYYY-MM-DD');
+    const isHoliday = appointments?.some((holiday: any) =>
+    moment(holiday.start).format('YYYY-MM-DD') === dateString && holiday.isHoliday
     );
-    const isDisabled = isHoliday
     const isPastDate = date < new Date()
     if(isPastDate && !moment(date).isSame(moment(), 'day')){
       return {
@@ -97,11 +81,12 @@ export const SchedulerCalendar = (props: CalendarProps) => {
           color: 'gray'
         }
       }
+    } else if (isHoliday) {
+      return {
+        className: 'disabled-day',
+      };
     }
-    return {
-      className: isHoliday ? 'holiday' : '',
-      disabled: isDisabled
-    }
+    return {}
   }
   return (
     <>

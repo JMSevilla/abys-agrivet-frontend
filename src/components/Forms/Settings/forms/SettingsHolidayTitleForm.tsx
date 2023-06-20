@@ -50,8 +50,8 @@ export const HolidayTitle = () => {
         handleSubmit((values) => {
             setTitle(values)
             next()
-            console.log(values)
-        })
+        })()
+        return false;
     }
     return (
         <FormProvider {...form}>

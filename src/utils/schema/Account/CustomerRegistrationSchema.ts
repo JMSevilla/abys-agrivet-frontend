@@ -34,11 +34,12 @@ export const customerSchema = z
     ({ conpassword, password }) => {
       return password === conpassword;
     },
-    {
-      path: ["conpassword"],
-      message: "Password is not match",
-    }
-  )
+    { path: ["conpassword"], message: "Password did not match" }
+  ).refine((data) => {
+    const hasSpecialCharacter = /[!@#$%^&*()_+]/.test(data.password);
+    const hasUpperCase = /[A-Z]/.test(data.password);
+    return hasSpecialCharacter && hasUpperCase;
+  }, { path: ['password'], message : 'Password must contain at least one special character and one upper case letter'})
 
 export type CustomerAccountType = z.infer<typeof customerSchema>;
 

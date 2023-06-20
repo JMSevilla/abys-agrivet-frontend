@@ -53,20 +53,21 @@ const APSchedulingForm = () => {
       }>>([])
     const { handleOnToast } = useToastContext()
     const [lastId, setLastId] = useState(0)
+    const checkIfDayPropsIsHoliday = useApiCallBack(async (api, id: number) => await api.abys.CheckIfDayPropIsHoliday(id))
     const getallscheduleperbranches = () => {
         GetAllSchedulePerBranch.execute(services?.branch_id ?? 0).then((response) => {
+            console.log(response)
             if(response?.data?.length > 0){
                 var chk = response?.data?.map((item:any) => {
                     return {
                         id: item?.id,
                         title: item?.title,
-                        start: new Date(item?.start),
-                        end: new Date(item?.end),
+                        start: item?.start,
+                        end: moment(item?.end).add(1, 'days'),
                         isHoliday: item?.isHoliday
                     }
                 })
                 setFeed(chk)
-                setValue('appointmentSchedule', chk)
             } else {
                 setFeed([])
             }
@@ -77,8 +78,18 @@ const APSchedulingForm = () => {
         getallscheduleperbranches()
         
     }, [])
+    const [selectedEvent, setSelectedEvent] = useState<any>([]) 
     const handleScheduleSelection = ({ start, end } : SlotInfo) => {
-        const selectedStart = moment(start).format('YYYY/MM/DD')
+        setLoading(!loading)
+        const selectedEvents = feed.filter((event) => {
+            const eventStartDate = moment(event.start).add(1, 'day');
+            const eventEndDate = moment(event.end).subtract(1, 'day');
+      
+            return (
+              eventStartDate.isSameOrBefore(end) &&
+              eventEndDate.isSameOrAfter(start)
+            );
+        });
         const values = getValues()
         const eventStartDate = new Date(start)
         if(eventStartDate < new Date() && !moment(start).isSame(moment(), 'day')){
@@ -98,43 +109,117 @@ const APSchedulingForm = () => {
                     "dark",
                     "error"
                   );
+                  setLoading(false)
                 return;
             }
             else {
-                const test = window.prompt("Schedule title")
-                if(test) {
-                    getHighestID.execute()
-                            .then((re) => {
-                                const id = re?.data == null || re?.data == "" ? lastId + 1 : re.data?.id + 1;
-                                
-                                const title = test;
-                                const isHoliday = false
-                                const newSched = [
-                                    {
-                                        id,
-                                        start,
-                                        end,
-                                        title,
-                                        isHoliday
-                                    }
-                                ]
-                                setFeed((prevState) => [...prevState, ...newSched])
-                                setValue('appointmentSchedule', newSched)
-                                setLastId(lastId + 1)
-                                setRemoveId(id)
-                            })
+                if(selectedEvents.length > 0) {
+                    selectedEvents.map((item) => {
+                                checkIfDayPropsIsHoliday.execute(item.id)
+                                .then(res => {
+                                    if(res?.data == 200) {
+                                        handleOnToast(
+                                            "Sorry but you cannot drop an appointment for this day because it is holiday.",
+                                            "top-right",
+                                            false,
+                                            true,
+                                            true,
+                                            true,
+                                            undefined,
+                                            "dark",
+                                            "error"
+                                        );
+                                        setLoading(false)
+                                    } else if(res?.data == 202){
+                                        handleOnToast(
+                                            "Sorry but the schedule you want is planned to close.",
+                                            "top-right",
+                                            false,
+                                            true,
+                                            true,
+                                            true,
+                                            undefined,
+                                            "dark",
+                                            "error"
+                                        );
+                                        setLoading(false)
+                                    } else {
+                                        const test = window.prompt("Schedule title")
+                                                        if(test) {
+                                                            getHighestID.execute()
+                                                                    .then((re) => {
+                                                                        const id = re?.data == null || re?.data == "" ? lastId + 1 : re.data?.id + 1;
+                                                                        
+                                                                        const title = test;
+                                                                        const isHoliday = false
+                                                                        const newSched = [
+                                                                            {
+                                                                                id,
+                                                                                start,
+                                                                                end,
+                                                                                title,
+                                                                                isHoliday
+                                                                            }
+                                                                        ]
+                                                                        setLoading(false)
+                                                                        setFeed((prevState) => [...prevState, ...newSched])
+                                                                        setValue('appointmentSchedule', newSched)
+                                                                        setLastId(lastId + 1)
+                                                                        setRemoveId(id)
+                                                                    })
+                                                        } else {
+                                                            setLoading(false)
+                                                        }
+                                                            }
+                                                        })
+                    })
+                } else {
+                    const test = window.prompt("Schedule title")
+                    if(test) {
+                        getHighestID.execute()
+                                .then((re) => {
+                                    const id = re?.data == null || re?.data == "" ? lastId + 1 : re.data?.id + 1;
+                                    
+                                    const title = test;
+                                    const isHoliday = false
+                                    const newSched = [
+                                        {
+                                            id,
+                                            start,
+                                            end,
+                                            title,
+                                            isHoliday
+                                        }
+                                    ]
+                                    setLoading(false)
+                                    setFeed((prevState) => [...prevState, ...newSched])
+                                    setValue('appointmentSchedule', newSched)
+                                    setLastId(lastId + 1)
+                                    setRemoveId(id)
+                                })
+                    } else {
+                        setLoading(false)
+                    }
                 }
             }
         }
     }
     const handleSelectedEvent = (event : any) => {
+        const closedCaseSensitive = event.title.toLowerCase()
+        const closedIncludes = closedCaseSensitive.includes("closing")
+        || closedCaseSensitive.includes("closed") || closedCaseSensitive.includes("store closed")
+        || closedCaseSensitive.includes("store closing")
         const eventStart = new Date(event?.start)
         const isPastDate = eventStart < new Date()
         if(isPastDate && !moment(event.start).isSame(moment(), 'day')){
             return;
         } else {
-            setRemoveId(event?.id)
+            if(event.isHoliday || closedIncludes) {
+                return;
+            }else {
+                setRemoveId(event?.id)
             setOpenModal(!openModal)
+            }
         }
     }
     const handleRemove = () => {

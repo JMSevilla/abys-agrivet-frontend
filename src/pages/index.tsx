@@ -1,5 +1,7 @@
 import HomeHeroSection from "@/components/Content/Home/HeroSection";
 import HomeFeatureSection from "@/components/Content/Home/FeatureSection";
+import { getNotificationToSend } from "@/utils/notification-api"
+import { GetServerSideProps } from "next"
 import {
   ArrowPathIcon,
   CloudArrowUpIcon,
@@ -11,11 +13,13 @@ import HomeFooterSection from "@/components/Content/Home/FooterSection";
 import { useSetupContext } from "@/utils/context/SetupContext/SetupContext";
 import { useEffect } from "react";
 import { Typography } from "@mui/material";
-import { usePlatform } from "@/utils/hooks/useToken";
-import { useRouter } from "next/router";
-import { useAuthenticationContext } from "@/utils/context/AuthContext/AuthContext";
-import { useApiCallBack } from "@/utils/hooks/useApi";
-const Home = () => {
+
+
+type PageProps = {
+  data?: any
+}
+
+const Home = ({ data } : PageProps) => {
   const features = [
     {
       name: "Push to deploy",
@@ -43,17 +47,10 @@ const Home = () => {
     },
   ];
   const { setupCheckUsersDB } = useSetupContext();
-  const getAllReminders = useApiCallBack(api => api.abys.getAllReminders())
 
   useEffect(() => {
     setupCheckUsersDB({ location: "homepage" });
   }, []);
-  useEffect(() => {
-    getAllReminders.execute()
-    .then(res => {
-      console.log(res.data)
-    })
-  }, [])
   return (
     <>
       <HomeHeroSection showNavSection disableMarginTop={false}>
@@ -123,4 +120,18 @@ const Home = () => {
   );
 };
 
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+  try {
+    const preloadedNotifications = await getNotificationToSend()
+    return { props : { data: { preloadedNotifications }}}
+  } catch (error: any) {
+      console.log(`Error on get Notification response: ${JSON.stringify(error)} . `)
+      return { props : {error}}
+  }
+}
+
+
 export default Home;
+
+
+
