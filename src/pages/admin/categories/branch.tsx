@@ -146,7 +146,7 @@ const Branch: React.FC = () => {
               variant="text"
               size="small"
             />
-            {params.row.branchStatus == 1 ? (
+            {/* {params.row.branchStatus == 1 ? (
               <NormalButton
                 children="DEACTIVATE"
                 variant="text"
@@ -176,7 +176,7 @@ const Branch: React.FC = () => {
                   )
                 }
               />
-            )}
+            )} */}
             <NormalButton
               children="REMOVE"
               variant="text"
@@ -481,6 +481,7 @@ const Branch: React.FC = () => {
                       sx={{ mt: 7, width: "100%" }}
                       data={branches}
                       columns={columns}
+                      pageSize={5}
                     />
                   </>
                 )

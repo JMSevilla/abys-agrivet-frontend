@@ -11,16 +11,7 @@ const Login: React.FC = () => {
     const { checkAuthentication } = useAuthenticationContext()
     const [branchPath, setBranchPath] = useBranchPath()
     useEffect(() => {
-        let savedPlatform;
-        const savedPlatformStorage = sessionStorage.getItem('PF')
-        if(typeof savedPlatformStorage == 'string'){
-            savedPlatform = JSON.parse(savedPlatformStorage)
-        }
-
-        if(!savedPlatform){
-            router.push('/platform')
-        } else {
-            checkAuthentication().then((res) => {
+        checkAuthentication().then((res) => {
             if (res == "authenticated") {
                 setLoading(false);
                 router.push(decrypt(branchPath))
@@ -28,7 +19,6 @@ const Login: React.FC = () => {
                 setLoading(false)
             }
             });
-        }
         
     }, [])
     return (

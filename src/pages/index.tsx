@@ -11,15 +11,16 @@ import {
 import HomeFeatureSectionSecondLayer from "@/components/Content/Home/FeatureSectionSecondLayer";
 import HomeFooterSection from "@/components/Content/Home/FooterSection";
 import { useSetupContext } from "@/utils/context/SetupContext/SetupContext";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Typography } from "@mui/material";
+import { useAuthenticationContext } from "@/utils/context/AuthContext/AuthContext";
+import { useRouter } from "next/router";
+import { decrypt } from "@/utils/config/encryptor";
+import { useBranchPath } from "@/utils/hooks/useToken";
+import { ControlledBackdrop } from "@/components";
 
 
-type PageProps = {
-  data?: any
-}
-
-const Home = ({ data } : PageProps) => {
+const Home = () => {
   const features = [
     {
       name: "Push to deploy",
@@ -46,14 +47,47 @@ const Home = ({ data } : PageProps) => {
       icon: FingerPrintIcon,
     },
   ];
+  const viewer = useRef<any>(null)
   const { setupCheckUsersDB } = useSetupContext();
+  const { checkAuthentication } = useAuthenticationContext()
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const [branchPath, setBranchPath] = useBranchPath()
+  const [path, setPath] = useState<string>('')
+  useEffect(() => {
+    let savedPlatform;
+    const savedPlatformStorage = sessionStorage.getItem('PF')
+    if(typeof savedPlatformStorage == 'string'){
+        savedPlatform = JSON.parse(savedPlatformStorage)
+    }
 
+    if(!savedPlatform){
+        setLoading(false)
+    } else {
+        checkAuthentication().then((res) => {
+        if (res == "authenticated") {
+            setLoading(false);
+            router.push(decrypt(branchPath))
+        } else {
+            setLoading(false)
+        }
+        });
+    }
+    
+}, [])
+useEffect(() => {
+  setPath('https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf')
+}, []);
   useEffect(() => {
     setupCheckUsersDB({ location: "homepage" });
   }, []);
   return (
     <>
-      <HomeHeroSection showNavSection disableMarginTop={false}>
+      {
+        loading ? <ControlledBackdrop open={loading} />
+        :
+        <>
+        <HomeHeroSection showNavSection disableMarginTop={false}>
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full py-1 px-3 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
             We always make your pets safe.{" "}
@@ -116,19 +150,11 @@ const Home = ({ data } : PageProps) => {
         ))}
       </HomeFeatureSectionSecondLayer>
       <HomeFooterSection />
+        </>
+      }
     </>
   );
 };
-
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
-  try {
-    const preloadedNotifications = await getNotificationToSend()
-    return { props : { data: { preloadedNotifications }}}
-  } catch (error: any) {
-      console.log(`Error on get Notification response: ${JSON.stringify(error)} . `)
-      return { props : {error}}
-  }
-}
 
 
 export default Home;

@@ -7,6 +7,12 @@ import {
   ListItem,
   ListItemText,
   Chip,
+  FormControl,
+  FormLabel,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+  TextField,
 } from "@mui/material";
 import { UncontrolledCard } from "@/components";
 import { useState, useEffect } from "react";
@@ -27,25 +33,33 @@ const Services: React.FC = () => {
   const [pg, setpg] = useState(0);
   const [searched, setSearched] = useState<string>("");
   const [rpg, setrpg] = useState(5);
+  const [radioBranches, setRadioBranches] = useState([])
+  const [preload, setPreLoad] = useState(false)
+  const [data, setData] = useState([])
   const handleTabsValue = (event: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
-  const { data } = useQuery({
-    queryKey: "getAllServices",
-    queryFn: () =>
-      getAllServicesRequest.execute().then((response) => response.data),
-  });
+  const { handleOnToast } = useToastContext()
+  const deleteService = useApiCallBack(
+    async (api, id: number) => await api.abys.DeleteService(id)
+  )
+  const findAllBranchesList = useApiCallBack((api) =>
+    api.abys.findAllBranchesManagement()
+  );
   const getAllServicesRequest = useApiCallBack((api) =>
     api.abys.getAllServices()
   );
   const handleChangePage = (event: any, newpage: any) => {
     setpg(newpage);
   };
+  const FilteredServices = useApiCallBack(
+    async (api, branch_id: number) => await api.users.FilterServices(branch_id)
+  )
   const globalSearch = (): TableSearchProps[] => {
     const filteredRepositories = data?.filter((value: any) => {
       return (
-        value?.title?.toLowerCase().includes(searched?.toLowerCase()) ||
-        value?.taskCode
+        value?.serviceName?.toLowerCase().includes(searched?.toLowerCase()) ||
+        value?.id
           ?.toString()
           .toLowerCase()
           .includes(searched?.toLowerCase())
@@ -53,6 +67,12 @@ const Services: React.FC = () => {
     });
     return filteredRepositories;
   };
+  function FuncGetAllBranchesToBeMapOnRadio() {
+    findAllBranchesList.execute()
+    .then((res) => {
+      setRadioBranches(res.data)
+    })
+  }
   const filterTableSearchList: TableSearchProps[] | [] = searched
     ? globalSearch()
     : data;
@@ -69,7 +89,15 @@ const Services: React.FC = () => {
       });
     }, 3000);
   }, []);
-
+  function FuncFindAllServices() {
+    getAllServicesRequest.execute().then((response) => {
+      setData(response.data)
+    })
+  }
+  useEffect(() => {
+    FuncGetAllBranchesToBeMapOnRadio()
+    FuncFindAllServices()
+  }, [])
   const columns: any[] = [
     {
       field: "id",
@@ -88,6 +116,35 @@ const Services: React.FC = () => {
       align: true,
     },
   ];
+  const DeleteService = (id: number) => {
+    setLoading(!loading)
+    deleteService.execute(id)
+    .then((res) => {
+      if(res.data == 200) {
+        handleOnToast(
+          "Successfully started the session.",
+          "top-right",
+          false,
+          true,
+          true,
+          true,
+          undefined,
+          "dark",
+          "success"
+      );
+      setLoading(false)
+      }
+    })
+  }
+  const handleSelectedBranches = (event: any) => {
+    const branchId = event.target.value;
+    // setPreLoad(!preload)
+    const filteredReportServices = data?.length > 0 && data?.filter((item: any) => {
+      const parsedData = JSON.parse(item?.serviceBranch)
+      return parsedData?.some((second: any) => second?.branch_id === branchId)
+    })
+    console.log(filteredReportServices)
+  }
   return (
     <>
       {loading ? (
@@ -145,19 +202,37 @@ const Services: React.FC = () => {
                 ) : (
                   tabsValue == 1 && (
                     <>
+                    <UncontrolledCard
+                    style={{
+                      marginTop: '10px',
+                      marginBottom: '10px'
+                    }}
+                    >
+                      <UncontrolledCard>
+                        <Typography variant='caption'>Search</Typography>
+                      <TextField
+                      variant="standard"
+                      fullWidth
+                      placeholder="Search services"
+                      onChange={(e) => setSearched(e.target.value)}
+                      ></TextField>
+                        </UncontrolledCard>
+                    </UncontrolledCard>
                       <CollapsibleTable
-                        data={data}
+                        data={filterTableSearchList && filterTableSearchList}
                         columns={columns}
                         pg={pg}
                         rpg={rpg}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
+                        handleChangeDeletion={DeleteService}
                       />
                     </>
                   )
                 )}
               </ControlledTabs>
             </UncontrolledCard>
+            <ControlledBackdrop open={preload} />
           </Container>
         </>
       )}
@@ -166,3 +241,4 @@ const Services: React.FC = () => {
 };
 
 export default Services;
+

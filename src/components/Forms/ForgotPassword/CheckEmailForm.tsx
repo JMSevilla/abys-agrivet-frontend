@@ -54,10 +54,6 @@ export const CheckEmail = () => {
     const [loading, setLoading] = useState(false)
     const checkEmail = useApiCallBack(async (api, email: string) =>
     await api.abys.CheckFPEmail(email))
-    const sendsmtpservice = useApiCallBack(async (api, args: SMSVerificationProps) =>
-    await api.abys.SendSMSVerification(args))
-    
-
     const { formState: {isValid}, handleSubmit } = form;
     const { handleOnToast } = useToastContext()
     const { next } = useActiveSteps(MAX_FP_STEPS)
@@ -65,51 +61,11 @@ export const CheckEmail = () => {
         handleSubmit(
             (values) => {
                 setLoading(!loading)
-                const obj = {
-                    email: values.email,
-                    code: 'auto-generated-server-side',
-                    resendCount: 0,
-                    isValid: 1,
-                    type: 'email',
-                    verificationCredentials : {
-                        email: values.email
-                    }
-                }
                 checkEmail.execute(values.email)
                 .then((r) => {
                     if(r.data == "exist") {
-                        sendsmtpservice.execute(obj)
-                        .then((i) => {
-                            if(i.data == 200) {
-                                handleOnToast(
-                                    "Verification code has been sent on your email",
-                                    "top-right",
-                                    false,
-                                    true,
-                                    true,
-                                    true,
-                                    undefined,
-                                    "dark",
-                                    "success"
-                                  );
-                                  setLoading(false)
-                                  setFp(values)
-                                  next()
-                            } else {
-                                handleOnToast(
-                                    "You have reached the maximum sent code.",
-                                    "top-right",
-                                    false,
-                                    true,
-                                    true,
-                                    true,
-                                    undefined,
-                                    "dark",
-                                    "error"
-                                  );
-                                  setLoading(false)
-                            }
-                        })
+                        setFp(values)
+                        next()
                     } else {
                         handleOnToast(
                             "There is no account associate on this email.",

@@ -42,8 +42,6 @@ export type JWTAccountCreationProps = {
 export type AccountLoginWithJWT = {
   email: string | undefined;
   password: string | undefined;
-  branch?: number | undefined;
-  accountType?: string | undefined;
 };
 
 export type AuthenticationProps = {
@@ -111,6 +109,9 @@ export type ProjectTableProps = {
   columns: any;
   rowIsCreativeDesign?: boolean;
   loading?: boolean
+  pageSize?: number
+  page?: number
+  handlePageChange?: (params: any) => void
 };
 
 /**
@@ -126,6 +127,17 @@ export type UAMProps = {
   password: string | undefined;
   branch: number | undefined;
 };
+
+export type ProfileManagement = {
+  firstname: string | undefined;
+  middlename: string | undefined;
+  lastname: string | undefined;
+  email: string | undefined;
+  username: string | undefined;
+  password: string | undefined;
+  phoneNumber: string | undefined
+  imgurl: string | undefined
+}
 
 /**
  * SMS Account Verification
@@ -187,6 +199,10 @@ export type CreateNewAppointment = {
   isWalkedIn: number
   notify?: number
   reminderType: number
+} & {
+  firstname?: string | undefined
+  middlename?: string | undefined
+  lastname?:string | undefined
 }
 
 // type for create new follow up appointment
@@ -203,4 +219,22 @@ export type CreateNewFollowUpAppointment = {
   diagnosis: string | undefined
   treatment: string | undefined
   isHoliday: number
+}
+
+export type CreateNewLobbyAppointment = {
+  email: string | undefined
+  phoneNumber: string | undefined
+  fullName: string | undefined
+  branch_id: number
+  service_id: string | undefined
+  petInfo: string | undefined
+  appointmentSchedule: string | undefined
+  status: number
+  isWalkedIn: number
+  notify?: number
+  reminderType: number
+} & {
+  firstname?: string | undefined
+  middlename?: string | undefined
+  lastname?:string | undefined
 }

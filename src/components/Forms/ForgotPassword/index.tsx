@@ -5,10 +5,15 @@ import { CheckEmail } from "./CheckEmailForm";
 import { UncontrolledCard } from "@/components/Card/Card";
 import { CheckCode } from "./CheckVerificationCode";
 import { FPNewPassword } from "./ProvideNewPassword";
+import { CheckPickVerification } from "./CheckPickVerification";
 const UAM_FP : Array<{label: string, form: React.FC}> = [
     {
         label: 'Check email',
         form: CheckEmail
+    },
+    {
+        label: 'pick verification',
+        form: CheckPickVerification
     },
     {
         label: 'Check code',
@@ -31,7 +36,7 @@ export const FPFormAdditionalDetails = () => {
         <OnboardingStepper 
             sx={{ mt: 3 }}
             activeStep={activeStep}
-            steps={['Checking email', 'Verification Entry', 'Provide New Password']}
+            steps={['Checking email', 'Select Verification Type', 'Verification Entry', 'Provide New Password']}
         />
         <Box mt={2} width="100%">
             <UncontrolledCard style={{

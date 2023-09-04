@@ -9,8 +9,8 @@ export const customerBaseschema = z.object({
   access_level: z.number().optional(),
   phoneNumber: requiredString("Your phone number is required."),
   email: requiredString("Your email is required").email(),
-  password: requiredString("Your password is required"),
-  conpassword: requiredString("Kindly confirm your password"),
+  password: requiredString("Your password is required").min(8),
+  conpassword: requiredString("Kindly confirm your password").min(8),
 });
 
 export const customerSchema = z
@@ -35,11 +35,7 @@ export const customerSchema = z
       return password === conpassword;
     },
     { path: ["conpassword"], message: "Password did not match" }
-  ).refine((data) => {
-    const hasSpecialCharacter = /[!@#$%^&*()_+]/.test(data.password);
-    const hasUpperCase = /[A-Z]/.test(data.password);
-    return hasSpecialCharacter && hasUpperCase;
-  }, { path: ['password'], message : 'Password must contain at least one special character and one upper case letter'})
+  )
 
 export type CustomerAccountType = z.infer<typeof customerSchema>;
 

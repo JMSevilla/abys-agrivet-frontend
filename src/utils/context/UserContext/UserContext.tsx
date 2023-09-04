@@ -4,27 +4,27 @@ import { useQuery } from 'react-query'
 import { useRouter } from 'next/router'
 
 const usercontext = createContext<{
-    lookAllUsersFromUAM(): void
-    users: any
+    lookAllUsersFromUAM(): Promise<any>
 }>(undefined as any)
 
 export const UserProvider: React.FC<React.PropsWithChildren<{}>> = ({
     children
 }) => {
     const FetchAllUAM = useApiCallBack(api => api.users.UAMGetAllList())
-    const [users, setUsers] = useState([])
     const router = useRouter()
-    const lookAllUsersFromUAM = useCallback(() => {
-        FetchAllUAM.execute().then(response => {
-            setUsers(response.data)
-        }).catch((err) => {
-            sessionStorage.clear()
+    const lookAllUsersFromUAM = () => {
+        return new Promise((resolve) => {
+            FetchAllUAM.execute().then(response => {
+                resolve(response.data)
+            }).catch((err) => {
+                sessionStorage.clear()
                 router.push('/platform')
+            })
         })
-    }, [])
+    }
     return (
         <usercontext.Provider value={{
-            lookAllUsersFromUAM, users
+            lookAllUsersFromUAM
         }}>
             {children}
         </usercontext.Provider>

@@ -87,20 +87,15 @@ const LoginForm: React.FC<
               Sign in to your account
             </Typography>
             {
-              platformState == 'customer' && 
-              <p className="mt-2 text-center text-sm text-gray-600">
-              Or{" "}
-              <a
-                href={
-                  platformState == "customer"
-                    ? "/customer-registration"
-                    : "//"
-                }
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                start creating your account
-              </a>
-            </p>
+               <p className="mt-2 text-center text-sm text-gray-600">
+               Or{" "}
+               <a
+                 href={"/customer-registration"}
+                 className="font-medium text-indigo-600 hover:text-indigo-500"
+               >
+                 start creating your account
+               </a>
+             </p>
             }
           </div>
           <div className="mt-8 space-y-6">
@@ -130,28 +125,6 @@ const LoginForm: React.FC<
                   onKeyPress={enterKeyTrigger}
                 />
               </div>
-              <div
-                style={{
-                  display: platformState == "customer" ? "none" : "",
-                }}
-              >
-                <label htmlFor="branch" className="sr-only">
-                  Branch
-                </label>
-                <ControlledSelectField
-                  control={control}
-                  name="branch"
-                  required
-                  shouldUnregister
-                  options={branch}
-                  label="Select Branch"
-                  onKeyPress={
-                    platformState != "customer"
-                      ? enterKeyTrigger
-                      : () => console.log("key press")
-                  }
-                />
-              </div>
             </div>
 
             <div className="flex items-center justify-between">
@@ -179,14 +152,6 @@ const LoginForm: React.FC<
                 >
                   Forgot your password?
                 </a> */}
-                <a
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                  onClick={(e) => handleChangeSignType(e, "/platform")}
-                  style={{ cursor: "pointer" }}
-                >
-                  Change signin type
-                </a>{" "}
-                | &nbsp;
                 <Link
                   href={
                     {
@@ -250,9 +215,7 @@ export const LoginAdditionalForm = () => {
       setOpen(!open);
       const obj = {
         email: values.email,
-        password: values.password,
-        branch: platformSaved == "customer" ? 0 : values.branch,
-        accountType: platformSaved,
+        password: values.password
       };
       mutate(obj, {
         onSuccess: (response: any) => {
@@ -286,6 +249,19 @@ export const LoginAdditionalForm = () => {
           } else if(data == 'NO_ACCOUNT_ON_THIS_BRANCH') {
             handleOnToast(
               "No account associated on this email",
+              "top-right",
+              false,
+              true,
+              true,
+              true,
+              undefined,
+              "dark",
+              "error"
+            );
+            setOpen(false)
+          } else if(data == 'BRANCH_NOT_WORKING') {
+            handleOnToast(
+              "Invalid credentials. Please check again",
               "top-right",
               false,
               true,

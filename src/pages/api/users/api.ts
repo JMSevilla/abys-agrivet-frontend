@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { AccountSetup, UAMProps } from "@/utils/types";
+import { AccountSetup, ProfileManagement, UAMProps } from "@/utils/types";
 export class UsersApi {
     constructor(private readonly axios: AxiosInstance){}
 
@@ -23,5 +23,18 @@ export class UsersApi {
         password: string | undefined
     }){
         return this.axios.put('/api/implusers/change-password', props)
+    }
+    public UAMDeleteUser(id: number) {
+        return this.axios.delete(`/api/implusers/uam-delete-user/${id}`)
+    }
+    public UpdateProfile(props: ProfileManagement) {
+        return this.axios.put('/api/implusers/update-profile-user', props)
+    }
+    public FilterAccessLevel(access_level: number) {
+        return this.axios.get(`/api/implusers/filter-uam-by-accesslevel/${access_level}`)
+    }
+    public FilterServices(branch_id: number){
+        return this
+        .axios.get(`/api/implusers/filter-services/${branch_id}`)
     }
 }

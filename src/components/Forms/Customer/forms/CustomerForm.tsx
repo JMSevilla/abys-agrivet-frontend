@@ -43,8 +43,6 @@ const CustomerAccountForm = () => {
     useFormContext<CustomerAccountType>();
   const hasNoMiddleName = watch("hasNoMiddleName");
   const hasNoMiddleNamePreviousValue = usePreviousValue(hasNoMiddleName);
-  const mobileNumber = watch("phoneNumber");
-  const phoneNumberRegex = /^(\+?63|0)9\d{9}$/;
   const passwordValue = watch("password");
   useEffect(() => {
     resetField("middlename");
@@ -53,14 +51,6 @@ const CustomerAccountForm = () => {
     }
   }, [hasNoMiddleName, hasNoMiddleNamePreviousValue, trigger, resetField]);
   useEffect(() => {}, [passwordValue]);
-  useEffect(() => {
-    const values = getValues();
-    if (phoneNumberRegex.test(values.phoneNumber)) {
-      return;
-    } else {
-      setError("phoneNumber", { message: "Invalid phone number" });
-    }
-  }, [mobileNumber]);
   const result = zxcvbn(
     getValues().password == undefined ? "" : getValues().password
   );

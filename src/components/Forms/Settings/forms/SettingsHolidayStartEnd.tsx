@@ -39,7 +39,12 @@ const SettingsHolidayStartEndForm = () => {
     const [loading, setLoading] = useState(false)
     const removeAffectedSchedules = useApiCallBack(async (api, args: { id: number, userid: number }) => await api.abys.removeAffectedSchedules(args))
     const affectedSchedules = useApiCallBack(async (api, args: {start: Date, end: Date}) => await api.abys.findAffectedSchedules(args))
+    const holidaySchedules = useApiCallBack(
+        async (api, args: { start: Date, end: Date }) =>
+        await api.abys.findHolidaySchedules(args)
+    )
     const [affectedsched, setAffectedSched] = useState([])
+    const [holidays, setHolidays] = useState([])
     const [tempDateSaved, setTempDateSaved] = useState<any>({
         start: null,
         end: null
@@ -58,8 +63,12 @@ const SettingsHolidayStartEndForm = () => {
         setTempDateSaved(newObj)
         affectedSchedules.execute(obj)
         .then((response) => {
-            setAffectedSched(response?.data)
-            setValue('affectedSchedules', response?.data)
+            holidaySchedules.execute(obj)
+            .then((res) => {
+                setHolidays(res.data)
+                setAffectedSched(response?.data)
+                setValue('affectedSchedules', response?.data)
+            })
         })
         setValue('selection', item.selection)
     }
@@ -216,8 +225,12 @@ const SettingsHolidayStartEndForm = () => {
                 );
                 affectedSchedules.execute(tempDateSaved)
                 .then((response) => {
-                    setAffectedSched(response?.data)
+                    holidaySchedules.execute(tempDateSaved)
+                    .then((res) => {
+                        setAffectedSched(response?.data)
                     setValue('affectedSchedules', response?.data)
+                    setHolidays(res.data)
+                    })
                 })
             } else {
                 handleOnToast(
@@ -243,7 +256,7 @@ const SettingsHolidayStartEndForm = () => {
                     ranges={state}
                     direction="horizontal"
                     moveRangeOnFirstSelection={false}
-                    months={2}
+                    months={1}
                     />
                     </UncontrolledCard>
                     <UncontrolledCard style={{
@@ -252,7 +265,16 @@ const SettingsHolidayStartEndForm = () => {
                         <Typography variant='button'>
                             Affected Schedules
                         </Typography>
-                        <ProjectTable columns={columns} data={affectedsched} />
+                        <ProjectTable pageSize={5} columns={columns} data={affectedsched} />
+                        <ControlledBackdrop open={loading} />
+                    </UncontrolledCard>
+                    <UncontrolledCard style={{
+                        marginTop: '10px'
+                    }}>
+                        <Typography variant='button'>
+                            Holidays & Closing Schedules
+                        </Typography>
+                        <ProjectTable pageSize={5} columns={columns} data={holidays} />
                         <ControlledBackdrop open={loading} />
                     </UncontrolledCard>
         </>
@@ -312,10 +334,10 @@ export const SettingsHolidayStartEnd = () => {
             userid: references?.id,
             branch: pick?.branch_id,
             mockSchedule: 'no-mock-schedule-holiday',
-            status: pick?.value == 'closed' ? 0 : 1,
-            isHoliday: pick?.value == 'holiday' ? 1 : 0,
+            status:  1,
+            isHoliday: pick?.value == 'holiday' ? 1 : 2,
             start: new Date(values.selection.startDate),
-            end: new Date(values.selection.endDate),
+            end: new Date(values.selection.startDate),
             title: title?.title
         }
         mutate(obj, {

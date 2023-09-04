@@ -121,7 +121,7 @@ const Row = (props: {
         <TableCell align="right">
           <div style={{ display: "flex", justifyContent: "right" }}>
             {/* <NormalButton onClick={() => handleChangeEdit(row)} children={<>EDIT</>} variant='outlined' size='small' />&nbsp; */}
-            {/* <NormalButton onClick={() => handleChangeDelete(row.id)} children={<>DELETE</>} color='error' variant='outlined' size='small' /> */}
+            <NormalButton onClick={() => handleChangeDelete(row.id)} children={<>DELETE</>} color='error' variant='outlined' size='small' />
           </div>
         </TableCell>
       </TableRow>

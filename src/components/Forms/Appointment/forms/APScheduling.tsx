@@ -51,19 +51,19 @@ const APSchedulingForm = () => {
         end: Date
         isHoliday?: boolean | undefined
       }>>([])
+    const appointmentSchedules = watch('appointmentSchedule')
     const { handleOnToast } = useToastContext()
     const [lastId, setLastId] = useState(0)
     const checkIfDayPropsIsHoliday = useApiCallBack(async (api, id: number) => await api.abys.CheckIfDayPropIsHoliday(id))
     const getallscheduleperbranches = () => {
         GetAllSchedulePerBranch.execute(services?.branch_id ?? 0).then((response) => {
-            console.log(response)
             if(response?.data?.length > 0){
                 var chk = response?.data?.map((item:any) => {
                     return {
                         id: item?.id,
                         title: item?.title,
                         start: item?.start,
-                        end: moment(item?.end).add(1, 'days'),
+                        end: item?.end,
                         isHoliday: item?.isHoliday
                     }
                 })
@@ -78,6 +78,7 @@ const APSchedulingForm = () => {
         getallscheduleperbranches()
         
     }, [])
+    useEffect(() => {}, [appointmentSchedules])
     const [selectedEvent, setSelectedEvent] = useState<any>([]) 
     const handleScheduleSelection = ({ start, end } : SlotInfo) => {
         setLoading(!loading)
@@ -164,13 +165,15 @@ const APSchedulingForm = () => {
                                                                         setLoading(false)
                                                                         setFeed((prevState) => [...prevState, ...newSched])
                                                                         setValue('appointmentSchedule', newSched)
+                                                                        setValue('start', moment(start).add(1, 'day').toDate())
+                                                                        setValue('end', moment(start).add(1, 'day').toDate())
                                                                         setLastId(lastId + 1)
                                                                         setRemoveId(id)
                                                                     })
                                                         } else {
                                                             setLoading(false)
                                                         }
-                                                            }
+                                    }
                                                         })
                     })
                 } else {
@@ -194,6 +197,8 @@ const APSchedulingForm = () => {
                                     setLoading(false)
                                     setFeed((prevState) => [...prevState, ...newSched])
                                     setValue('appointmentSchedule', newSched)
+                                    setValue('start', moment(start).add(1, 'day').toDate())
+                                    setValue('end', moment(start).add(1, 'day').toDate())
                                     setLastId(lastId + 1)
                                     setRemoveId(id)
                                 })
@@ -251,8 +256,10 @@ const APSchedulingForm = () => {
             } else {
                 const index = feed.findIndex((item) => item.id === removeId)
                 if(index !== -1) {
+                    const values = getValues()
                     const update = [...feed.slice(0, index), ...feed.slice(index + 1)]
                     setFeed(update)
+                    setValue('appointmentSchedule', [])
                 }
                 setLoading(false)
             }
@@ -264,7 +271,7 @@ const APSchedulingForm = () => {
             <SchedulerCalendar appointments={
                 feed
             } handleSelection={handleScheduleSelection}
-             views={["day", "agenda", "week", "month"]} 
+             views={["month", "day"]} 
              handleSelectedEvent={handleSelectedEvent}/>
              <ControlledModal
              open={openModal}

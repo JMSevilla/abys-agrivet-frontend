@@ -108,7 +108,7 @@ const PetInformationForm = () => {
                                         />
                                         <ControlledRichTextField 
                                         handleChange={
-                                            (e) => setValue(`petInfo.${i}.otherConcerns`, e)
+                                            (e) => setValue(`petInfo.${i}.otherConcerns`, JSON.stringify(e))
                                         }
                                         />
                                     </Grid>

@@ -93,6 +93,67 @@ export const ChooseVerificationType = () => {
           },
         });
         break;
+      case "email":
+        const emailObject = {
+          email: customerDetails?.email,
+          code: "auto-generated-server-side",
+          resendCount: 0,
+          isValid: 1,
+          type: "email",
+          verificationCredentials: {
+            email: customerDetails?.email,
+            phoneNumber: customerDetails?.phoneNumber,
+          },
+        };
+        setLoading(!loading);
+        mutate(emailObject, {
+          onSuccess: (response: any) => {
+            const { data }: any = response;
+            if (data == 200) {
+              handleOnToast(
+                "Verification code has been sent on your phone number",
+                "top-right",
+                false,
+                true,
+                true,
+                true,
+                undefined,
+                "dark",
+                "success"
+              );
+              setLoading(false);
+              next();
+            } else {
+              handleOnToast(
+                "You've reached the maximum sent verification request. Please use last sent code.",
+                "top-right",
+                false,
+                true,
+                true,
+                true,
+                undefined,
+                "dark",
+                "error"
+              );
+              setLoading(false);
+            }
+          },
+          onError: (error) => {
+            handleOnToast(
+              "Something went wrong",
+              "top-right",
+              false,
+              true,
+              true,
+              true,
+              undefined,
+              "dark",
+              "error"
+            );
+            setLoading(false);
+          },
+        });
+        break;
     }
   };
   return (
@@ -104,6 +165,7 @@ export const ChooseVerificationType = () => {
               borderRadius: "20px",
               cursor: "pointer",
             }}
+            handleClick={() => handleSendSelection("email")}
           >
             <div style={{ textAlign: "center" }}>
               <img

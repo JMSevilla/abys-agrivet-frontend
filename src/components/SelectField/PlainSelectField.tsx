@@ -14,6 +14,11 @@ export const PlainSelectField: React.FC<PlainSelectFieldProps> = ({
         native
         size='small'
         {...rest}
+        sx={{
+            '& select': {
+              height: '5vh', // Adjust the height value as needed
+            },
+          }}
         >
             <option value="" disabled hidden />
             {options?.length > 0 && options.map((option, i) => {

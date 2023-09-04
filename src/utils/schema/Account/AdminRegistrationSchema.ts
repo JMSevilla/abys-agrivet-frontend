@@ -8,8 +8,8 @@ export const adminBaseSchema = z.object({
     email: requiredString('Your email is required').email(),
     username: requiredString('Your username is required.'),
     phoneNumber: requiredString("Your phone number is required."),
-    password: requiredString('Your password is required').min(8).max(64),
-    conpassword: requiredString('Please confirm your password'),
+    password: requiredString('Your password is required').max(16),
+    conpassword: requiredString('Please confirm your password').max(16),
     branch: z.string().optional()
 })
 

@@ -5,6 +5,7 @@ import {
 } from "../schema/Account/AdminRegistrationSchema";
 import { PlatformProps } from "@/pages/platform";
 import {
+  ProfileType,
   UAMAccountCredType,
   UAMAccountType,
 } from "../schema/Account/UAMSchema";
@@ -18,9 +19,10 @@ import {
 } from "../schema/Branch/BranchSchema";
 import { ServiceCreation } from "../schema/Services/ServiceSchema";
 import { AppointmentPetInformationType, AppointmentSchedulingType, AppointmentServiceType, AppointmentType } from "../schema/Appointment/AppointmentSchema";
-import { FPAccountType, FPNewPasswordType, baseVerificationType } from "../schema/Account/ForgotPasswordSchema";
+import { FPAccountType, FPNewPasswordType, baseFPPhone, baseVerificationType } from "../schema/Account/ForgotPasswordSchema";
 import { HolidayPickType, HolidayStartEndType, HolidayTitleType } from "../schema/Appointment/HolidaySchema";
 import { RecommendationsType } from "../schema/Appointment/RecommendationsAppointment";
+import { WalkedInType } from "../schema/Appointment/WalkedInAppointmentSchema";
 export const AdministratorAccountCreationAtom = atom<
   AdministratorAccountType | undefined
 >(undefined);
@@ -82,3 +84,9 @@ export const HolidayPickAtom = atom<HolidayPickType | undefined>(undefined)
 export const HolidayStartEndAtom = atom<HolidayStartEndType | undefined>(undefined)
 
 export const RecommendationsAtom = atom<RecommendationsType | undefined>(undefined)
+
+export const WalkedInAtom = atom<WalkedInType | undefined>(undefined)
+
+export const FPPhoneAtom = atom<baseFPPhone | undefined>(undefined)
+
+export const ProfileAtom = atom<ProfileType | undefined>(undefined)

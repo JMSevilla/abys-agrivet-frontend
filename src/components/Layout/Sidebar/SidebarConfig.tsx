@@ -9,7 +9,7 @@ import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices
 import EventNoteIcon from '@mui/icons-material/EventNote'
 import CreateIcon from '@mui/icons-material/Create';
 import PreviewIcon from '@mui/icons-material/Preview';
-
+import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 type sidebarProps = {
@@ -201,7 +201,7 @@ export const sidebarCustomerList: sidebarProps[] = [
           {
             title: "View",
             dropDown: true,
-            uri: "/customer/dashboard",
+            uri: "/customer/appointment/view",
             icon: (
               <>
                 <ListItemIcon>
@@ -261,20 +261,101 @@ export const sidebarManagersList: sidebarProps[] = [
     objectID: 1,
     name: 'Managers',
     title: 'Manager Overview',
-    dropDown: false,
     uri: '/managers/dashboard',
+    dropDown: false,
     icon: <AssessmentIcon className="text-white" />
   },
   {
     objectID: 2,
     name: 'Appointments',
     title: 'Appointments',
+    dropDown: true,
+    icon: <CalendarMonthIcon className="text-white" />,
+    dropDownChildren: [
+      {
+        parentMenu: 'Appointments',
+        icon: (
+          <>
+            <ListItemIcon>
+              <CalendarMonthIcon className="text-white" />
+            </ListItemIcon>
+          </>
+        ),
+        childMenu: [
+          {
+            title: 'Walked-In',
+            dropDown: true,
+            uri:'/managers/appointments/walkin',
+            icon: (
+              <>
+                <ListItemIcon>
+                  <DirectionsWalkIcon className="text-white" />
+                </ListItemIcon>
+              </>
+            ),
+          },
+          {
+            title: 'List',
+            dropDown: true,
+            uri:'/managers/appointments/',
+            icon: (
+              <>
+                <ListItemIcon>
+                  <MiscellaneousServicesIcon className="text-white" />
+                </ListItemIcon>
+              </>
+            ),
+          }
+        ],
+        dropDown: false
+      }
+    ]
+  },
+  {
+    objectID: 3,
+    name: 'Record Management',
+    title: 'Record',
+    uri: '/managers/record-management',
     dropDown: false,
-    uri: '/managers/appointments',
-    icon: <CalendarMonthIcon className="text-white" />
+    icon : <AssessmentIcon className="text-white" />
   }
 ]
 
 export const sidebarManagersExpand: sidebarExpandProps[] = [
-
+  {
+    parentMenu: 'Appointments',
+    icon: (
+      <>
+        <ListItemIcon>
+          <EventNoteIcon className="text-white" />
+        </ListItemIcon>
+      </>
+    ),
+    childMenu: [
+      {
+        title: "Create Appointment",
+        dropDown: true,
+        uri: "/customer/dashboard",
+        icon: (
+          <>
+            <ListItemIcon>
+              <EventNoteIcon className="text-white" />
+            </ListItemIcon>
+          </>
+        ),
+      },
+      {
+        title: "Appointment List",
+        dropDown: true,
+        uri: "/customer/dashboard",
+        icon: (
+          <>
+            <ListItemIcon>
+              <EventNoteIcon className="text-white" />
+            </ListItemIcon>
+          </>
+        ),
+      },
+    ],
+  }
 ]

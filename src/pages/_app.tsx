@@ -35,7 +35,9 @@ import { GlobalsProvider } from "@/utils/context/HelperContext/HelperContext";
 import "react-quill/dist/quill.snow.css";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-
+import 'react-vertical-timeline-component/style.min.css';
+import { useApiCallBack } from "@/utils/hooks/useApi";
+import { SMSVerificationProps } from "@/utils/types";
 /**@deprecated this library has no good UI */
 // import "react-datepicker/dist/react-datepicker.css";
 export type NextPageWithLayout<P = any, IP = P> = NextPage<P, IP> & {
@@ -50,6 +52,18 @@ const theme = createTheme({
   palette: {
     mode: "light",
   },
+  components: {
+    MuiTextField : {
+      styleOverrides: {
+        root: {
+          '&.Mui-disabled' : {
+            cursor: 'not-allowed'
+          }
+        }
+      }
+    }
+  },
+  
 });
 const queryClient = new QueryClient({});
 
@@ -62,6 +76,17 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const [loading, setLoading] = useState(false);
   const [storedValue, setStoredValue] = useState<string | undefined>(undefined);
   const [storedType, setStoredType] = useState<number | undefined>(undefined);
+  const notifyAppointmentFeature = useApiCallBack(api => api.abys.getNotifyOnPageReload())
+  const sendsmtpservice = useApiCallBack(async (api, args: SMSVerificationProps) =>
+  await api.abys.SendSMSVerification(args))
+  const sendReminder = useApiCallBack(
+    async (api, args: {
+      type: number,
+      id: number,
+      email: string,
+      phoneNumber: string
+    }) => await api.abys.reminderSystem(args)
+  )
   useRefreshTokenHandler();
   useEffect(() => {
     setLoading(!loading);
@@ -88,6 +113,24 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     }
   }, [accessToken, userType]);
 
+  useEffect(() => {
+    notifyAppointmentFeature.execute()
+    .then((response) => {
+      if(response?.data?.length > 0) {
+        response.data?.map((item: any) => {
+            const obj = {
+              type: item?.reminderType,
+              id: item?.id,
+              email: item?.email,
+              phoneNumber: item?.phoneNumber 
+            }
+            if(item?.notify == 0) {
+              sendReminder.execute(obj)
+            }
+        })
+      }
+    })
+  }, [])
 
   return (
     <>

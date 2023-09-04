@@ -31,7 +31,9 @@ export const APSchedulingSchema = z.object({
         start: z.date(),
         end: z.date(),
         isHoliday: z.boolean().optional()
-    }).array()
+    }).array(),
+    start: z.date(),
+    end: z.date()
 })
 
 export type AppointmentSchedulingType = z.infer<typeof APSchedulingSchema>

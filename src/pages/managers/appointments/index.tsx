@@ -24,6 +24,7 @@ import FollowTheSignsIcon from '@mui/icons-material/FollowTheSigns';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import moment from "moment";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { FollowUpCollapsibleTable } from "@/components/Table/FollowUpCollapsibleTable";
 /**@author JM Sevilla 
  * @access There is no current validation on save submission so be aware.
  */
@@ -35,21 +36,30 @@ const Appointments: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const GetAppointmentBasedOnBranch = useApiCallBack(async (api, branch_id: number) => await api.abys.getAllAppointmentPerBranch(branch_id))
     const [feed, setFeed] = useState([])
+    const [followUpSessionLoader, setFollowUpSessionLoader] = useState(false)
     const [followupFeed, setFollowUpFeed] = useState([])
+    const [walkedinFeed, setWalkedInFeed] = useState([])
     const [preload, setPreload] = useState(false)
-    const [tabsValue, setTabsValue] = useState(1)
+    const [tabsValue, setTabsValue] = useState(0)
     const [followup, setFollowUp] = useState(false)
+    const [pg, setpg] = useState(0);
+    const [searched, setSearched] = useState<string>("");
+    const [rpg, setrpg] = useState(5);
+    const [needToBeDoneCount, setNeedToBeDoneCount] = useState(0)
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-    const GetFollowUpAppointmentOnBranch = useApiCallBack(async (api, branch_id : number) => await api.abys.FollowUpAppointmentList(branch_id))
+    const GetFollowUpAppointmentOnBranch = useApiCallBack(async (api, args : { branch_id: number, id: number }) => await api.abys.FollowUpAppointmentList(args))
     const appointmentSessionActions = useApiCallBack(async (api, args : { actions: string|undefined, id: number, managerUid: number }) => 
     await api.abys.appointmentSessionActions(args))
     const getSessionUser = useApiCallBack(async (api, manageruid: number) => await api.abys.GetSessionUser(manageruid))
-    const makeAppointmentDone = useApiCallBack(async (api, id: number) => await api.abys.MakeAppointmentDone(id))
+    const makeAppointmentDone = useApiCallBack(async (api, args : { id: number, deletionId: number }) => await api.abys.MakeAppointmentDone(args))
     const searchEngineFollowUpAppointment = useApiCallBack(async (api, args: {
         start: any,
         end: any,
         customerName: string | undefined
     }) => await api.abys.SearchEngineFollowUpAppointment(args))
+    const walkedInAppointmentsList = useApiCallBack(
+        async (api, branch_id: number) => await api.abys.WalkedInAppointments(branch_id)
+    )
     const [searchPreLoad, setSearchPreLoad] = useState(false)
     const [savedReferences, setSavedReferences] = useState<any>({
         id: null,
@@ -67,12 +77,95 @@ const Appointments: React.FC = () => {
     })
     const { handleOnToast } = useToastContext()
     const createFollowUpCheckup = useApiCallBack(async (api, args: CreateNewFollowUpAppointment) => await api.abys.createNewFollowAppointment(args))
-    const handleCalendarPopOver = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget)
+    const followUpSessionActions = useApiCallBack(
+    async (api, args : { id: number, actions: string }) =>
+    await api.abys.FollowUpSessionActions(args)
+    )
+    const followUpCountNeedToBeDone = useApiCallBack(
+        async (api, args: {branch_id: number, id: number}) =>
+        await api.abys.FollowUpCountNeedToDone(args) 
+    )
+    const getHighestID = useApiCallBack(api => api.abys.getHighestID())
+    const todaysAppointment = useApiCallBack(
+        async (api, branch_id: number) => await api.abys.todaysAppointment(branch_id)
+    )
+    const handleFollowUpSessions = (actions: string, id: number, appointmentId: number) => {
+        setFollowUpSessionLoader(!followUpSessionLoader)
+        const obj = {
+            id: id,
+            actions: actions
+        }
+        followUpSessionActions.execute(obj)
+        .then((response) => {
+            if(response.data == 200) {
+                handleOnToast(
+                    "Successfully started the session.",
+                    "top-right",
+                    false,
+                    true,
+                    true,
+                    true,
+                    undefined,
+                    "dark",
+                    "success"
+                );
+                setFollowUpSessionLoader(false)
+                FuncGetFollowUpAppointmentPerBranch(appointmentId)
+                FuncGetCountNeedsToBeDone(references?.branch, id)
+                FuncGetWalkedInList()
+            } else if (response.data == 201) {
+                handleOnToast(
+                    "Successfully ended the session.",
+                    "top-right",
+                    false,
+                    true,
+                    true,
+                    true,
+                    undefined,
+                    "dark",
+                    "success"
+                );
+                setFollowUpSessionLoader(false)
+                FuncGetFollowUpAppointmentPerBranch(appointmentId)
+                FuncGetCountNeedsToBeDone(references?.branch, id)
+                FuncGetWalkedInList()
+            } else {
+                handleOnToast(
+                    "The session is done",
+                    "top-right",
+                    false,
+                    true,
+                    true,
+                    true,
+                    undefined,
+                    "dark",
+                    "success"
+                );
+                setFollowUpSessionLoader(false)
+                FuncGetFollowUpAppointmentPerBranch(appointmentId)
+                FuncGetCountNeedsToBeDone(references?.branch, id)
+                FuncGetWalkedInList()
+            }
+        })
     }
-    const handleCalendarClose = () => {
-        setAnchorEl(null)
+    const handleChangePage = (event: any, newpage: any) => {
+        setpg(newpage);
+      };
+    const globalSearch = (): Array<{id: number, customerName: string}> => {
+        const filteredFollowUps = followupFeed?.filter((value: any) => {
+            return (
+                value?.customerName?.toLowerCase().includes(searched?.toLowerCase())
+                || value?.id
+                ?.toString()
+                .toLowerCase().includes(searched?.toLowerCase())
+            )
+        })
+        return filteredFollowUps
     }
+
+    const filteredDistributedFollowUps: Array<{id: number, customerName: string}> | [] = 
+    searched ? globalSearch() : followupFeed
+
     const open = Boolean(anchorEl)
     const id = open ? 'simple-popover' : undefined
     const useCreateFollowUpCheckUp = () => {
@@ -89,10 +182,20 @@ const Appointments: React.FC = () => {
             setFeed(response?.data)
         })
     }
-    function FuncGetFollowUpAppointmentPerBranch() {
-        GetFollowUpAppointmentOnBranch.execute(references?.branch)
+    function FuncGetFollowUpAppointmentPerBranch(id: number) {
+        const obj = {
+            branch_id: references?.branch, 
+            id: id
+        }
+        GetFollowUpAppointmentOnBranch.execute(obj)
         .then((response) => {
             setFollowUpFeed(response?.data)
+        })
+    }
+    function FuncGetWalkedInList() {
+        walkedInAppointmentsList.execute(references?.branch)
+        .then((response) => {
+            setWalkedInFeed(response?.data)
         })
     }
     const [state, setState] = useState<Array<{
@@ -131,17 +234,17 @@ const Appointments: React.FC = () => {
             branch_id: savedReferences.branch_id,
             customerName: savedReferences.customerName,
             followupServices: JSON.stringify(savedReferences.service),
-            followupDescription: values.description,
+            followupDescription: JSON.stringify(values.description),
             notificationType: values.value,
-            diagnosis: values.diagnosis,
-            treatment: values.treatment,
+            diagnosis: JSON.stringify(values.diagnosis),
+            treatment: JSON.stringify(values.treatment),
             status: 1,
             isHoliday: 0, // fix holiday value
             start: values.start,
-            end: values.end,
-            managersId: savedReferences?.managersId
-        } ?? recommendations
-        setRecommendations(values)
+            end: values.start,
+            managersId: savedReferences?.managersId,
+            isSessionStarted: 0,
+        }
         setLoading(!loading)
         mutate(obj, {
             onSuccess: (response) => {
@@ -160,6 +263,7 @@ const Appointments: React.FC = () => {
                     setLoading(false)
                     setViewMoreModal(false)
                     FuncGetAppointmentPerBranch()
+                    setFollowUp(false)
                 } else if(response.data == 401){
                     handleOnToast(
                         "Invalid follow up date schedule.",
@@ -177,6 +281,10 @@ const Appointments: React.FC = () => {
             }
         })
     }
+    const handleTodaysAppointment = () => {
+        todaysAppointment.execute(references?.branch)
+        .then((repo) => setFeed(repo.data))
+    }
     useEffect(() => {
         if(savedReferences) {
             setPreload(false)
@@ -192,11 +300,11 @@ const Appointments: React.FC = () => {
             })
             setServices(filtered)
         })
-    }, [savedReferences])
+    }, [savedReferences, tabsValue])
     const { checkAuthentication } = useAuthenticationContext()
     useEffect(() => {
         FuncGetAppointmentPerBranch()
-        FuncGetFollowUpAppointmentPerBranch()
+        FuncGetWalkedInList()
     }, [])
     useEffect(() => {
         setTimeout(() => {
@@ -217,6 +325,13 @@ const Appointments: React.FC = () => {
             case 5: return 'Batangas City'
         }
     }
+    const FuncGetCountNeedsToBeDone = (branch_id: number, id: number) => {
+        followUpCountNeedToBeDone.execute(
+            {branch_id: branch_id, id: id}
+        ).then((res) => {
+            setNeedToBeDoneCount(res.data)
+        })
+    }
     const handleViewMore = (id: number, services: any, fullName: string, branch_id: number, petInfo: any, session: number,
         managersId: number) => {
         setPreload(!preload)
@@ -236,6 +351,9 @@ const Appointments: React.FC = () => {
             }
             setSavedReferences(newSavedReferences)
             setViewMoreModal(!viewMoreModal)
+            FuncGetFollowUpAppointmentPerBranch(id)
+            FuncGetCountNeedsToBeDone(references?.branch, id)
+            FuncGetWalkedInList()
         })
     }
     const followupColumns: any[] = [
@@ -387,17 +505,6 @@ const Appointments: React.FC = () => {
             }
         },
         {
-            field: 'start',
-            headerName: 'Appointment Date',
-            width: 150,
-            sortable: false,
-            renderCell: (params: any) => {
-                return (
-                    <Chip variant='filled' size='small' label={moment().format('LL')} color='info' />
-                )
-            }
-        },
-        {
             headerName: 'ACTIONS',
             width: 450,
             renderCell: (params: any) => {
@@ -427,7 +534,7 @@ const Appointments: React.FC = () => {
     const handleSelectionRange = (item: any) => {
         setState([item.selection])
         setValue('start', new Date(item.selection?.startDate))
-        setValue('end', new Date(item.selection?.endDate))
+        setValue('end', new Date(item.selection?.startDate))
     }
     const handleSelectionFilterRange = (item: any) => {
         setFilterDate([item.selection])
@@ -466,60 +573,93 @@ const Appointments: React.FC = () => {
             })
     }
     const handleSessions = (actions: string | undefined, id: number) => {
-        const obj = {
-            actions: actions,
-            id: id,
-            managerUid: references.id
-        }
-        setLoading(!loading)
-        switch(actions) {
-            case "start":
-                appointmentSessionActions.execute(obj).then((response) => {
-                    const { data } = response;
-                    if(data == 201) {
-                        handleOnToast(
-                            "Successfully started the session.",
-                            "top-right",
-                            false,
-                            true,
-                            true,
-                            true,
-                            undefined,
-                            "dark",
-                            "success"
-                        );
-                        setLoading(false)
-                        setViewMoreModal(false)
-                        FuncGetAppointmentPerBranch()
-                    }
-                })
-                break;
-            case "end":
-                appointmentSessionActions.execute(obj).then((response) => {
-                    const { data } = response;
-                    if(data == 202) {
-                        handleOnToast(
-                            "Successfully end the session.",
-                            "top-right",
-                            false,
-                            true,
-                            true,
-                            true,
-                            undefined,
-                            "dark",
-                            "success"
-                        );
-                        setLoading(false)
-                        setViewMoreModal(false)
-                        FuncGetAppointmentPerBranch()
-                    }
-                })
-                break;
-        }
+        getHighestID.execute().then((rep) => {
+            const obj = {
+                actions: actions,
+                id: id,
+                deletionId: rep.data?.id,
+                managerUid: references.id
+            }
+            setLoading(!loading)
+            switch(actions) {
+                case "start":
+                    appointmentSessionActions.execute(obj).then((response) => {
+                        const { data } = response;
+                        if(data == 201) {
+                            handleOnToast(
+                                "Successfully started the session.",
+                                "top-right",
+                                false,
+                                true,
+                                true,
+                                true,
+                                undefined,
+                                "dark",
+                                "success"
+                            );
+                            setLoading(false)
+                            FuncGetAppointmentPerBranch()
+                            setViewMoreModal(false)
+                            FuncGetWalkedInList()
+                        }
+                    })
+                    break;
+                case "end":
+                    appointmentSessionActions.execute(obj).then((response) => {
+                        const { data } = response;
+                        if(data == 202) {
+                            handleOnToast(
+                                "Successfully end the session.",
+                                "top-right",
+                                false,
+                                true,
+                                true,
+                                true,
+                                undefined,
+                                "dark",
+                                "success"
+                            );
+                            setLoading(false)
+                            FuncGetAppointmentPerBranch()
+                            setViewMoreModal(false)
+                            FuncGetWalkedInList()
+                        }
+                    })
+                    break;
+                case "cancel_appointment":
+                    appointmentSessionActions.execute(obj).then((response) => {
+                        const { data } = response;
+                        if(data == 200 || data == 203) {
+                            handleOnToast(
+                                "Successfully cancel appointment.",
+                                "top-right",
+                                false,
+                                true,
+                                true,
+                                true,
+                                undefined,
+                                "dark",
+                                "success"
+                            );
+                            setLoading(false)
+                            FuncGetAppointmentPerBranch()
+                            setViewMoreModal(false)
+                            FuncGetWalkedInList()
+                        }
+                    })
+                    break;
+            }
+        })
+        
     }
     const handleDone = () => {
         setLoading(!loading)
-        makeAppointmentDone.execute(savedReferences?.id)
+        getHighestID.execute().then((res) => {
+            const obj = {
+                id: savedReferences?.id,
+                deletionId: res.data.id
+            }
+            makeAppointmentDone.execute(obj)
         .then((response) => {
             const { data } = response
             if(data == 200){
@@ -537,12 +677,22 @@ const Appointments: React.FC = () => {
                 setLoading(false)
                 setViewMoreModal(false)
                 FuncGetAppointmentPerBranch()
+                FuncGetWalkedInList()
             }
+        })
         })
     }
     const handleClose = () => {
         setViewMoreModal(false)
         setFollowUp(false)
+    }
+    const handleChangeRowsPerPage = (event: any) => {
+        setrpg(parseInt(event.target.value, 10));
+        setpg(0);
+      };
+    const handleSearch = (event : any) => {
+        const values = event.currentTarget?.value
+        setSearched(values)
     }
     return (
         <>
@@ -551,30 +701,30 @@ const Appointments: React.FC = () => {
                 <ControlledBackdrop open={loading} />
                 :
                 <Container maxWidth='xl'>
-                    <ControlledTabs
-                    value={tabsValue}
-                    handleChange={(event: React.SyntheticEvent, newValue: number) => setTabsValue(newValue)}
-                    style={{
-                        marginTop: '10px',
-                        padding: '10px'
-                    }}
-                    tabsinject={
-                        [
-                            {
-                                label: 'Appointment / Follow-Up / Sessions'
-                            },
-                            {
-                                label: "Follow-up Appointments"
-                            }
-                        ]
-                    }
-                    >
-                        {
-                            tabsValue == 0 ? 
-                            <>
+                          <>
                             <UncontrolledCard style={{ marginTop: '10px' }}>
-                    <Typography variant='button'>Appointments</Typography>
-                    <ProjectTable columns={columns} data={feed} sx={{ mt: 2 }} />
+                    <Typography variant='button'>Online Appointments |</Typography>&nbsp;
+                    <div style={{
+                        display: 'inline'
+                    }}>
+                        <NormalButton 
+                        variant="text"
+                        size="small"
+                        children="Today Appointments"
+                        onClick={handleTodaysAppointment}
+                        /> | 
+                        <NormalButton 
+                        variant="text"
+                        size="small"
+                        children="Get All Appointments"
+                        onClick={() => FuncGetAppointmentPerBranch()}
+                        />
+                    </div>
+                    <ProjectTable pageSize={5} columns={columns} data={feed} sx={{ mt: 2 }} />
+                </UncontrolledCard>
+                <UncontrolledCard style={{marginTop: '10px'}}>
+                    <Typography variant='button'>Walked-In Appointments |</Typography>&nbsp;
+                    <ProjectTable pageSize={5} columns={columns} data={walkedinFeed} sx={{ mt: 2 }} />
                 </UncontrolledCard>
                 <ControlledModal
                 maxWidth='xl'
@@ -586,8 +736,31 @@ const Appointments: React.FC = () => {
                 buttonTextDecline="CANCEL"
                 hideAgreeButton
                 >
-                   {preload ? <ControlledBackdrop open={preload} /> :
-                   <>
+                      <ControlledTabs
+                    value={tabsValue}
+                    handleChange={(event: React.SyntheticEvent, newValue: number) => setTabsValue(newValue)}
+                    style={{
+                        marginTop: '10px',
+                        padding: '10px'
+                    }}
+                    badgeContent={needToBeDoneCount}
+                    tabsinject={
+                        [
+                            {
+                                label: 'Primary Appointments'
+                            },
+                            {
+                                label: "Follow-up Appointments"
+                            }
+                        ]
+                    }
+                    >
+                       {
+                        tabsValue == 0 ?
+                        <>
+                        {preload ? <ControlledBackdrop open={preload} /> :
+                            <div style={{ padding: '10px', marginTop: '20px'}}>
+                                <>
                     <Typography variant='button'>View more appointment : </Typography>
                     {
                         savedReferences?.session == 0 ?
@@ -603,8 +776,19 @@ const Appointments: React.FC = () => {
                         <Chip variant="filled" color='info' size='small' label="None" />
                         : <Chip variant="filled" color='info' size='small' label={savedReferences?.vetName} />
                     }
+                    <>
                     {
                         savedReferences?.session == 0 ?
+                        <>
+                        
+                        <NormalButton 
+                            sx={{float: 'right', mt: 3, mb: 3, ml: 2, mr: 2}}
+                            variant='outlined'
+                            color='error'
+                            size='small'
+                            children='CANCEL APPOINTMENT'
+                            onClick={() => handleSessions("cancel_appointment", savedReferences.id)}
+                        />
                         <NormalButton 
                             sx={{float: 'right', mt: 3, mb: 3}}
                             variant='outlined'
@@ -614,7 +798,17 @@ const Appointments: React.FC = () => {
                             startIcon={<PlayCircleFilledIcon />}
                             onClick={() => handleSessions("start", savedReferences.id)}
                         />
+                        </>
                         : savedReferences?.session == 1 ?
+                        <>
+                        <NormalButton 
+                            sx={{float: 'right', mt: 3, mb: 3, ml: 2, mr: 2}}
+                            variant='outlined'
+                            color='error'
+                            size='small'
+                            children='CANCEL APPOINTMENT'
+                            onClick={() => handleSessions("cancel_appointment", savedReferences.id)}
+                        />
                         <NormalButton 
                             sx={{float: 'right', mt: 3, mb: 3}}
                             variant='outlined'
@@ -624,6 +818,7 @@ const Appointments: React.FC = () => {
                             startIcon={<StopIcon />}
                             onClick={() => handleSessions("end", savedReferences.id)}
                         />
+                        </>
                         : savedReferences?.session == 2 &&
                         <div style={{ display: 'inline' }}>
                             {
@@ -632,6 +827,9 @@ const Appointments: React.FC = () => {
                             sx={{float: 'right', mt: 3, mb: 3}}
                             variant='outlined'
                             color='success'
+                            disabled={
+                                needToBeDoneCount > 0 ? true : false
+                            }
                             size='small'
                             onClick={handleDone}
                             children='DONE'
@@ -644,6 +842,9 @@ const Appointments: React.FC = () => {
                             color={
                                 followup ? 'error' : 'primary'
                             }
+                            disabled={
+                                needToBeDoneCount > 0 ? true : false
+                            }
                             size='small'
                             onClick={() => setFollowUp(!followup)}
                             children={
@@ -653,6 +854,7 @@ const Appointments: React.FC = () => {
                         />
                         </div>
                     }
+                    </>
                     <ControlledGrid>
                         <Grid item xs={6}>
                             <UncontrolledCard>
@@ -827,80 +1029,43 @@ const Appointments: React.FC = () => {
                     />
                     </UncontrolledCard>
                     </div>}
-                   </>}
-                </ControlledModal>
-                            </>
-                            : tabsValue == 1 && 
-                            <>
-                                <UncontrolledCard style={{marginTop: '10px'}}>
-                                    <div style={{display: 'inline'}}>
-                                    <Typography variant='button' sx={{mr: 1}}>Follow-up Appointments |</Typography> &nbsp; 
-                                    <Typography variant='caption'>Filter</Typography>
-                                    <IconButton aria-label="calendar" onClick={handleCalendarPopOver}>
-                                        <CalendarMonthIcon />
-                                    </IconButton>
-                                    <Popover
-                                    id={id}
-                                    open={open}
-                                    anchorEl={anchorEl}
-                                    onClose={handleCalendarClose}
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'left'
-                                    }}
-                                    >
-                                        <UncontrolledCard>
-                                            <Typography variant='caption'>Select date</Typography> <br />
-                                            <div style={{ width: '100%'}}>
-                                            <DateRangePicker
-                                                onChange={(item: any) => handleSelectionFilterRange(item)} 
-                                                ranges={filterDate}
-                                                direction="horizontal"
-                                                moveRangeOnFirstSelection={false}
-                                                months={1}
-                                            />
-                                            </div>
-                                            <NormalButton 
-                                            sx={{float: 'right', mt: 2, mb: 2}}
-                                            variant="outlined"
-                                            size="small"
-                                            children="CONFIRM"
-                                            onClick={handleCalendarClose}
-                                            />
-                                        </UncontrolledCard>
-                                    </Popover>
-                                    <TextField 
-                                    placeholder="Search customer name (e.g) John Doe"
-                                    variant="outlined"
-                                    size="small"
-                                    sx={{
-                                        width: '350px'
-                                    }}
-                                    value={savedForSearch?.customerName}
-                                    onChange={(e: any) => handleChangeSearchTextField(e)}
-                                    /> &nbsp;
-                                    <NormalButton 
-                                    variant="outlined"
-                                    size="small"
-                                    children="SEARCH"
-                                    onClick={handleSearchTrigger}
-                                    />
-                                    &nbsp;
-                                    <NormalButton 
-                                    variant="outlined"
-                                    size="small"
-                                    children="FETCH ALL"
-                                    onClick={FuncGetFollowUpAppointmentPerBranch}
-                                    />
-                                    </div>
-                                    <ProjectTable columns={followupColumns} loading={searchPreLoad} data={followupFeed} sx={{ mt: 2 }} />
-                                </UncontrolledCard>
-                                <ControlledModal
-                                
-                                ></ControlledModal>
-                            </>
+                   </>
+                            </div>
                         }
+                        </>
+                        : tabsValue == 1 &&
+                        <>
+                            <div style={{padding: '10px', marginTop: '20px'}}>
+                                <UncontrolledCard>
+                                    <div style={{ display: 'inline'}}>
+                                    <Typography variant='button'>Follow-up appointments list</Typography>
+                                    <TextField
+                                    variant='outlined'
+                                    size="small"
+                                    placeholder="Search"
+                                    fullWidth
+                                    sx={{ mb: 2}}
+                                    onChange={handleSearch}
+                                    ></TextField>
+                                    </div>
+                                    <FollowUpCollapsibleTable 
+                                    data={filteredDistributedFollowUps}
+                                    columns={columns}
+                                    pg={pg}
+                                    rpg={rpg}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                    handleFollowUpSessions={handleFollowUpSessions}
+                                    />
+                                    <ControlledBackdrop open={followUpSessionLoader} />
+                                </UncontrolledCard>
+                            </div>
+                        </>
+                       }
                     </ControlledTabs>
+                </ControlledModal>
+                </>
+                  
                 </Container>
             }
         </>

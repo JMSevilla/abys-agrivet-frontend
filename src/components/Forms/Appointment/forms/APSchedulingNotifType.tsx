@@ -19,6 +19,7 @@ import { useToastContext } from "@/utils/context/Toast/ToastContext";
 import { ControlledGrid } from "@/components/Grid/Grid";
 import { BottomButtonGroup } from "@/components/Button/BottomButtonGroup";
 import { useReferences } from "@/utils/hooks/useToken";
+import moment from "moment";
 
  export const APSchedulingNotificationType = () => {
     const createNewAppointment = useApiCallBack(async (api, args: CreateNewAppointment) => 
@@ -51,7 +52,9 @@ import { useReferences } from "@/utils/hooks/useToken";
                     notify: 0,
                     reminderType: 1,
                     isSessionStarted: 0,
-                    managersId: 0
+                    managersId: 0,
+                    created_at: moment(schedule?.start).subtract(1, 'day'),
+                    updated_at: moment(schedule?.start).subtract(1, 'day')
                 }
                 useCreateNewAppointment.mutate(obj, {
                     onSuccess: (response) => {

@@ -12,12 +12,17 @@ export const baseCheckVerificationCode = z.object({
     code: requiredString("Verification code is required.")
 })
 
+export const baseFPPhoneNumber = z.object({
+    phoneNumber: requiredString("Your phone number is required."),
+})
+
+export type baseFPPhone = z.infer<typeof baseFPPhoneNumber>
 
 export type baseVerificationType = z.infer<typeof baseCheckVerificationCode>
 
 export const FPNewPasswordBaseSchema = z.object({
-    password: requiredString('Your password is required.'),
-    conpassword: requiredString('Kindly confirm your password')
+    password: requiredString('Your password is required.').max(16),
+    conpassword: requiredString('Kindly confirm your password').max(16)
 }).refine(
     ({ conpassword, password }) => {
         return password === conpassword

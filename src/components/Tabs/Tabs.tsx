@@ -3,6 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { Badge } from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,6 +49,7 @@ type ControlledTabsProps = {
   handleChange: (event: React.SyntheticEvent, newValue: number) => void;
   children: React.ReactNode;
   style?: React.CSSProperties;
+  badgeContent?: number
 };
 
 type CombinedProps = ControlledTabsProps & TabProps;
@@ -57,6 +59,7 @@ export const ControlledTabs: React.FC<CombinedProps> = ({
   handleChange,
   tabsinject,
   children,
+  badgeContent,
   ...rest
 }) => {
   return (
@@ -69,7 +72,13 @@ export const ControlledTabs: React.FC<CombinedProps> = ({
           {...rest}
         >
           {tabsinject.map((item: any, index: any) => (
-            <Tab label={item.label} {...a11yProps(index)} />
+            <Tab
+             label={
+              <Badge badgeContent={badgeContent} color='primary'>
+                {item.label}
+              </Badge>
+            } 
+            {...a11yProps(index)} key={index} />
           ))}
         </Tabs>
       </Box>

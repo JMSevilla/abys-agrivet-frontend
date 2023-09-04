@@ -1,5 +1,5 @@
 import { AxiosInstance } from "axios";
-import { BranchProps, CreateNewAppointment, CreateNewFollowUpAppointment, CreateNewScheduleProps, SMSVerificationProps } from "@/utils/types";
+import { BranchProps, CreateNewAppointment, CreateNewFollowUpAppointment, CreateNewLobbyAppointment, CreateNewScheduleProps, SMSVerificationProps } from "@/utils/types";
 export class AbysApi {
   constructor(private readonly axios: AxiosInstance) {}
 
@@ -88,6 +88,14 @@ export class AbysApi {
   }){
     return this.axios.get(`/api/implappointment/check-affected-schedules/${props.start}/${props.end}`)
   }
+  public findHolidaySchedules(
+    props : {
+      start: Date,
+      end: Date
+    }
+  ) {
+    return this.axios.get(`/api/implappointment/check-holidays/${props.start}/${props.end}`)
+  }
   public postNewHoliday(props: CreateNewScheduleProps){
     return this.axios.post('/api/implappointment/post-new-holiday', props)
   }
@@ -119,11 +127,11 @@ export class AbysApi {
   public GetSessionUser(manageruid: number){
     return this.axios.get(`/api/implappointment/get-assigned-user-session/${manageruid}`)
   }
-  public MakeAppointmentDone(id: number) {
-    return this.axios.put(`/api/implappointment/appointment-make-it-done/${id}`)
+  public MakeAppointmentDone(props : { id: number, deletionId: number }) {
+    return this.axios.put(`/api/implappointment/appointment-make-it-done/${props.id}/${props.deletionId}`)
   }
-  public FollowUpAppointmentList(id: number) {
-    return this.axios.get(`/api/implappointment/follow-up-appointments-list/${id}`)
+  public FollowUpAppointmentList(props : {branch_id: number, id: number}) {
+    return this.axios.get(`/api/implappointment/follow-up-appointments-list/${props.branch_id}/${props.id}`)
   }
   public SearchEngineFollowUpAppointment(props : {
     start: any,
@@ -131,5 +139,88 @@ export class AbysApi {
     customerName: string | undefined
   }) {
     return this.axios.get(`/api/implappointment/search-follow-up-appointments/${props.start}/${props.end}/${props.customerName}`)
+  }
+  public FollowUpSessionActions(
+    props: {
+      id: number,
+      actions: string
+    }
+  ){
+    return this.axios.put(`/api/implappointment/follow-up-session-management`, props)
+  }
+  public FollowUpCountNeedToDone(props : {branch_id: number, id: number}){
+    return this.axios.get(`/api/implappointment/follow-up-count-done/${props.branch_id}/${props.id}`)
+  }
+  public todaysAppointment(branch_id: number) {
+    return this.axios.get(`/api/implappointment/get-todays-appointment/${branch_id}`)
+  }
+  public newLobbyAppointment(props : CreateNewLobbyAppointment){
+    return this.axios.post('/api/implappointment/bring-appointment-lobby', props)
+  }
+  public FindAllWalkedInLobbies(branch_id: number) {
+    return this.axios.get(`/api/implappointment/find-all-lobbies/${branch_id}`)
+  }
+  public DeleteAfterProceedFromLobby(id: number) {
+    return this.axios.delete(`/api/implappointment/remove-after-proceed-from-lobby/${id}`)
+  }
+  public CountAppointments(props:{
+    branch_id : number,
+    type: string | undefined
+  }){
+    return this.axios.get(`/api/implappointment/count-reports/${props.branch_id}/${props.type}`)
+  }
+  public WalkedInAppointments(branch_id: number) {
+    return this.axios.get(`/api/implappointment/get-all-walked-in-appointments/${branch_id}`)
+  }
+  public FindAllRecordPerBranch(branch_id: number) {
+    return this.axios.get(`/api/implappointment/get-all-record-done-appointment/${branch_id}`)
+  }
+  public FindUserByManagerId(manager_id: number) {
+    return this.axios.get(`/api/implappointment/get-user-by-manager-id/${manager_id}`)
+  }
+  public FindFollowUpsByAPId(id: number) {
+    return this.axios.get(`/api/implappointment/find-follow-ups-by-appointment-id/${id}`)
+  }
+  public DeleteService(id: number) {
+    return this.axios.delete(`/api/implservices/delete-service/${id}`)
+  }
+  public CountAdminReportCard(type: string){
+    return this.axios.get(`/api/implappointment/counts-admin-report/${type}`)
+  }
+  public FindAppointmentsByEmail(email : string) {
+    return this.axios.get(`/api/implappointment/find-appointment-by-email/${email}`)
+  }
+  public CountCustomerReportCard(
+    props: { type: string, email: string }
+  ){
+    return this.axios.get(`/api/implappointment/count-appointment-customer-card/${props.type}/${props.email}`)
+  }
+  public getNotifyOnPageReload() {
+    return this.axios.get(`/api/implappointment/check-reminder`)
+  }
+  public reminderSystem(
+    props : {
+      type: number,
+      id: number,
+      email: string,
+      phoneNumber: string
+    }
+  ){
+    return this.axios.put(
+      `/api/implverification/reminder-system/${props.type}/${props.id}/${props.email}/${props.phoneNumber}`
+    )
+  }
+  public CheckSavedEventOnDB(id: number) {
+    return this.axios.get(`/api/implappointment/check-event-db-saved/${id}`)
+  }
+  public CancelAppointmentOnLobby(id: number){
+    return this.axios.delete(`/api/implappointment/cancel-appointment-lobby/${id}`)
+  }
+  public FilterRecordsByBranch(branch_id: number) {
+    return this.axios.get(`/api/implappointment/filter-records-by-branch/${branch_id}`)
+  }
+  public PushToArchive(id: number) {
+    return this.axios
+    .put(`/api/implappointment/push-to-archive/${id}`)
   }
 }
