@@ -34,8 +34,11 @@ const Dashboard: React.FC = () => {
     api.abys.findAllBranchesManagement()
   );
     const GetAllSchedulePerBranch = useApiCallBack(
-      async (api, branch: number) =>
-      await api.abys.findAllSchedulePerBranch(branch)
+      async (api, args: {
+        branch: number,
+        userid?: number
+      }) =>
+      await api.abys.findAllSchedulePerBranch(args)
     )
     function FuncGetAllBranchesToBeMapOnRadio() {
       findAllBranchesList.execute()
@@ -74,7 +77,10 @@ const Dashboard: React.FC = () => {
     const handleSelectedBranches = (event: any) => {
       const branchId = event.target.value
       setPreload(!preload)
-      GetAllSchedulePerBranch.execute(branchId).then((response) => {
+      GetAllSchedulePerBranch.execute({
+        branch: branchId,
+        userid: references?.id
+      }).then((response) => {
         if(response?.data?.length > 0){
               var chk = response?.data?.map((item:any) => {
                   return {

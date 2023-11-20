@@ -181,7 +181,7 @@ export const CustomerAccountFormAdditional = () => {
       setOpen(!open);
       const obj = {
         firstname: values.firstname,
-        middlename: customerDetails?.middlename,
+        middlename: customerDetails?.middlename == null ? "N/A" : customerDetails?.middlename,
         lastname: values.lastname,
         email: values.email,
         username: values.username,

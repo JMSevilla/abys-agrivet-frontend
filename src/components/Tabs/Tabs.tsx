@@ -3,7 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { Badge } from "@mui/material";
+import { Badge, TabProps } from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -40,7 +40,7 @@ function a11yProps(index: number) {
 type TabExtraData = {
   label: string;
 };
-type TabProps = {
+type TabsProps = {
   tabsinject: TabExtraData[];
 };
 
@@ -50,9 +50,10 @@ type ControlledTabsProps = {
   children: React.ReactNode;
   style?: React.CSSProperties;
   badgeContent?: number
+  orientation: "horizontal" | "vertical" | undefined
 };
 
-type CombinedProps = ControlledTabsProps & TabProps;
+type CombinedProps = ControlledTabsProps & TabsProps ;
 
 export const ControlledTabs: React.FC<CombinedProps> = ({
   value,
@@ -60,12 +61,14 @@ export const ControlledTabs: React.FC<CombinedProps> = ({
   tabsinject,
   children,
   badgeContent,
+  orientation,
   ...rest
 }) => {
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={ orientation == 'horizontal' ? {width: '100%'}: { flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
+        orientation={orientation}
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"

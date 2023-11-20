@@ -88,8 +88,10 @@ const Row = (props: {
   row: ReturnType<typeof createData>;
   handleChangeEdit: any;
   handleChangeDelete: any;
+  handleChangeActivation: any
+  handleAddNewBranch: any
 }) => {
-  const { row, handleChangeEdit, handleChangeDelete } = props;
+  const { row, handleChangeEdit, handleChangeDelete, handleChangeActivation, handleAddNewBranch } = props;
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -120,7 +122,10 @@ const Row = (props: {
         </TableCell>
         <TableCell align="right">
           <div style={{ display: "flex", justifyContent: "right" }}>
-            {/* <NormalButton onClick={() => handleChangeEdit(row)} children={<>EDIT</>} variant='outlined' size='small' />&nbsp; */}
+            <NormalButton onClick={() => handleChangeEdit(row)} children={<>Modify</>} variant='outlined' size='small' />&nbsp;
+            <NormalButton onClick={() => handleChangeActivation(row.id, row.serviceStatus)} children={
+              row.serviceStatus == 1 ? 'Deactivate' : 'Activate'
+            } variant='outlined' size='small' />&nbsp;
             <NormalButton onClick={() => handleChangeDelete(row.id)} children={<>DELETE</>} color='error' variant='outlined' size='small' />
           </div>
         </TableCell>
@@ -132,8 +137,9 @@ const Row = (props: {
               <Typography variant="h6" gutterBottom component="div">
                 {/* Subtask under taskcode: {row.taskCode} */}
               </Typography>
+              {/* <NormalButton children='ADD' variant='outlined' size='small' onClick={() => handleAddNewBranch()} sx={{ float: 'right', mt: 2, mb: 2 }}  /> */}
               <Table size="small" aria-label="dev tickets">
-                <TableHead>
+                <TableHead >
                   <TableRow>
                     <TableCell>Branch ID</TableCell>
                     <TableCell>Branch availability</TableCell>
@@ -167,6 +173,8 @@ type CollapsibleTableProps = {
   onRowsPerPageChange?: any;
   handleChangeEdit?: any;
   handleChangeDeletion?: any;
+  handleChangeActivation?: any
+  handleAddNewBranch?: any
   columns?: Array<{ field: string; align: boolean }>;
 };
 
@@ -179,6 +187,8 @@ export const CollapsibleTable: React.FC<CollapsibleTableProps> = (props) => {
     onRowsPerPageChange,
     handleChangeEdit,
     handleChangeDeletion,
+    handleChangeActivation,
+    handleAddNewBranch,
     columns,
   } = props;
   return (
@@ -200,6 +210,8 @@ export const CollapsibleTable: React.FC<CollapsibleTableProps> = (props) => {
               row={row}
               handleChangeEdit={handleChangeEdit}
               handleChangeDelete={handleChangeDeletion}
+              handleChangeActivation={handleChangeActivation}
+              handleAddNewBranch={handleAddNewBranch}
             />
           ))}
         </TableBody>

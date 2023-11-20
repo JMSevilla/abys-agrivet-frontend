@@ -32,8 +32,11 @@ const APSchedulingForm = () => {
     const [openModal, setOpenModal] = useState(false)
     const [references, setReferences] = useReferences()
     const GetAllSchedulePerBranch = useApiCallBack(
-        async (api, branch: number) =>
-        await api.abys.findAllSchedulePerBranch(branch)
+        async (api, args:{
+            branch: number,
+            userid: number
+        }) =>
+        await api.abys.findAllSchedulePerBranch(args)
     )
     const deleteSelectedSchedule = useApiCallBack(async (api, id: number) => await api.abys.handleSelectedSchedule(id))
     const useDeleteSelectedSchedule = () => {
@@ -56,7 +59,10 @@ const APSchedulingForm = () => {
     const [lastId, setLastId] = useState(0)
     const checkIfDayPropsIsHoliday = useApiCallBack(async (api, id: number) => await api.abys.CheckIfDayPropIsHoliday(id))
     const getallscheduleperbranches = () => {
-        GetAllSchedulePerBranch.execute(services?.branch_id ?? 0).then((response) => {
+        GetAllSchedulePerBranch.execute({
+            branch: services?.branch_id ?? 0,
+            userid: references?.id
+        }).then((response) => {
             if(response?.data?.length > 0){
                 var chk = response?.data?.map((item:any) => {
                     return {

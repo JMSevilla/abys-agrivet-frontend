@@ -53,8 +53,11 @@ const WalkedIn: React.FC = () => {
     const id = open ? 'simple-popover' : undefined
 
     const GetAllSchedulePerBranch = useApiCallBack(
-        async (api, branch: number) =>
-        await api.abys.findAllSchedulePerBranch(branch)
+        async (api, args: {
+            branch: number,
+            userid?: number
+        }) =>
+        await api.abys.findAllSchedulePerBranch(args)
     )
     const checkIfDayPropsIsHoliday = useApiCallBack(
         async (api, id: number) => await api.abys.CheckIfDayPropIsHoliday(id)
@@ -130,7 +133,10 @@ const WalkedIn: React.FC = () => {
         })
     }
     const getAllSchedulePerBranches = () => {
-        GetAllSchedulePerBranch.execute(references?.branch ?? 0).then((response) => {
+        GetAllSchedulePerBranch.execute({
+            branch: references?.branch ?? 0,
+            userid: 0
+        }).then((response) => {
             if(response?.data?.length > 0) {
                 var chk = response?.data?.map((item: any) => {
                     return {

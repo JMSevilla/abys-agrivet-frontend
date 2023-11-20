@@ -15,7 +15,7 @@ import {
   TextField,
 } from "@mui/material";
 import { UncontrolledCard } from "@/components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEventHandler } from "react";
 import { useToastContext } from "@/utils/context/Toast/ToastContext";
 import { useAuthenticationContext } from "@/utils/context/AuthContext/AuthContext";
 import { ControlledTabs } from "@/components";
@@ -25,6 +25,8 @@ import { useApiCallBack } from "@/utils/hooks/useApi";
 import { useQuery } from "react-query";
 import { CollapsibleTable } from "@/components/Table/CollapsibleTable";
 import { TableSearchProps } from "@/utils/types";
+import ControlledModal from "@/components/Modal/Modal";
+import BasicSelectField from "@/components/SelectField/BasicSelectField";
 
 const Services: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -32,6 +34,9 @@ const Services: React.FC = () => {
   const [tabsValue, setTabsValue] = useState(0);
   const [pg, setpg] = useState(0);
   const [searched, setSearched] = useState<string>("");
+  const [servicesModify, setServicesModify] = useState<any>({})
+  const [modifyModal, setModifyModal] = useState(false)
+  const [addModal, setAddModal] = useState(false)
   const [rpg, setrpg] = useState(5);
   const [radioBranches, setRadioBranches] = useState([])
   const [preload, setPreLoad] = useState(false)
@@ -39,9 +44,14 @@ const Services: React.FC = () => {
   const handleTabsValue = (event: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
   };
+  const [branch, setBranch] = useState<any>([]);
+
   const { handleOnToast } = useToastContext()
   const deleteService = useApiCallBack(
     async (api, id: number) => await api.abys.DeleteService(id)
+  )
+  const modifyPrimaryDetails = useApiCallBack(
+    async (api, args: { id: number, serviceName: string }) => await api.abys.modifyPrimaryServiceDetails(args)
   )
   const findAllBranchesList = useApiCallBack((api) =>
     api.abys.findAllBranchesManagement()
@@ -49,12 +59,18 @@ const Services: React.FC = () => {
   const getAllServicesRequest = useApiCallBack((api) =>
     api.abys.getAllServices()
   );
+  const activateServices = useApiCallBack(
+    async (api, args: {id: number, type: string}) => await api.abys.activateServices(args)
+  )
   const handleChangePage = (event: any, newpage: any) => {
     setpg(newpage);
   };
   const FilteredServices = useApiCallBack(
     async (api, branch_id: number) => await api.users.FilterServices(branch_id)
   )
+  const FindAllBranchesRequest = useApiCallBack((api) =>
+    api.abys.GetAllBranches()
+  );
   const globalSearch = (): TableSearchProps[] => {
     const filteredRepositories = data?.filter((value: any) => {
       return (
@@ -88,6 +104,19 @@ const Services: React.FC = () => {
         }
       });
     }, 3000);
+  }, []);
+  useEffect(() => {
+    FindAllBranchesRequest.execute().then((response) => {
+      const { data }: any = response;
+      if (data.length > 0) {
+        const newBranch = [...data];
+        newBranch.splice(5, 1);
+        console.log(newBranch)
+        setBranch(newBranch);
+      } else {
+        setBranch([]);
+      }
+    });
   }, []);
   function FuncFindAllServices() {
     getAllServicesRequest.execute().then((response) => {
@@ -143,7 +172,72 @@ const Services: React.FC = () => {
       const parsedData = JSON.parse(item?.serviceBranch)
       return parsedData?.some((second: any) => second?.branch_id === branchId)
     })
-    console.log(filteredReportServices)
+  }
+  const handleChangeEdit = (row: any) => {
+    setServicesModify(row)
+    setModifyModal(!modifyModal)
+  }
+  const handleActivation = (id: number, services: number) => {
+    setLoading(!loading)
+    activateServices.execute({
+      id: id,
+      type: services == 1 ? 'deactivate': 'activate'
+    }).then(res => {
+      if(res.data == 200) {
+        handleOnToast(
+          "Successfully activated/deactivated services.",
+          "top-right",
+          false,
+          true,
+          true,
+          true,
+          undefined,
+          "dark",
+          "success"
+      );
+      setLoading(false)
+      FuncGetAllBranchesToBeMapOnRadio()
+      FuncFindAllServices()
+      }
+    })
+  }
+  const handleChangeServicesName = (event: any) => {
+    const value = event.target.value;
+    setServicesModify((prevState: any) => ({
+      ...prevState,
+      serviceName: value
+    }))
+  }
+  const handleSaveModification = () => {
+    setLoading(!loading)
+    modifyPrimaryDetails.execute({
+      id: servicesModify.id,
+      serviceName: servicesModify.serviceName
+    }).then(res => {
+      if(res.data === 200) {
+        handleOnToast(
+            "Successfully modify.",
+            "top-right",
+            false,
+            true,
+            true,
+            true,
+            undefined,
+            "dark",
+            "success"
+        );
+        setModifyModal(false)
+        setLoading(false)
+        FuncGetAllBranchesToBeMapOnRadio()
+        FuncFindAllServices()
+      }
+    })
+  }
+  const handleOpenAddBranch = () => {
+    setAddModal(!addModal)
+  }
+  const handleChangeBranch = (value: any) => {
+    console.log(value)
   }
   return (
     <>
@@ -226,7 +320,51 @@ const Services: React.FC = () => {
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
                         handleChangeDeletion={DeleteService}
+                        handleChangeActivation={handleActivation}
+                        handleChangeEdit={handleChangeEdit}
+                        handleAddNewBranch={handleOpenAddBranch}
                       />
+                      <ControlledModal
+                        open={modifyModal}
+                        buttonTextAccept="SAVE"
+                        buttonTextDecline="CANCEL"
+                        handleClose={() => setModifyModal(false)}
+                        handleDecline={() => setModifyModal(false)}
+                        title="Services Modification"
+                        handleSubmit={handleSaveModification}
+                      >
+                        <Typography variant='button'>
+                          Services Modification
+                        </Typography> <br />
+                        <TextField 
+                          value={servicesModify.serviceName}
+                          variant='outlined'
+                          size='small'
+                          label='Service Name'
+                          sx={{ width: '100%', mt:2 }}
+                          onChange={handleChangeServicesName}
+                        />
+                      </ControlledModal>
+                      <ControlledModal
+                        open={addModal}
+                        buttonTextAccept="SAVE"
+                        buttonTextDecline="CANCEL"
+                        handleClose={() => setAddModal(false)}
+                        handleDecline={() => setAddModal(false)}
+                        title="Branch Modification"
+                        handleSubmit={() => {}}
+                      >
+                         <Typography variant='button'>
+                          Adding branch
+                        </Typography> <br />
+                        <BasicSelectField 
+                          label="Select branch"
+                          options={branch}
+                          onChange={handleChangeBranch}
+                          value={''}
+                          
+                        />
+                      </ControlledModal> 
                     </>
                   )
                 )}

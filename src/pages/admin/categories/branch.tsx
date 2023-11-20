@@ -146,7 +146,7 @@ const Branch: React.FC = () => {
               variant="text"
               size="small"
             />
-            {/* {params.row.branchStatus == 1 ? (
+            {params.row.branchStatus == 1 ? (
               <NormalButton
                 children="DEACTIVATE"
                 variant="text"
@@ -176,7 +176,7 @@ const Branch: React.FC = () => {
                   )
                 }
               />
-            )} */}
+            )}
             <NormalButton
               children="REMOVE"
               variant="text"
@@ -424,6 +424,7 @@ const Branch: React.FC = () => {
               Branch Category Management
             </Typography>
             <ControlledTabs
+              orientation="horizontal"
               value={tabsValue}
               handleChange={handleChange}
               style={{

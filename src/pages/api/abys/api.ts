@@ -61,8 +61,11 @@ export class AbysApi {
   public createNewSchedule(props: CreateNewScheduleProps){
     return this.axios.post('/api/implappointment/create-schedule', props)
   }
-  public findAllSchedulePerBranch(branch: number){
-    return this.axios.get(`/api/implappointment/get-all-schedule-per-branch/${branch}`)
+  public findAllSchedulePerBranch(props: {
+    branch: number,
+    userid?: number
+  }){
+    return this.axios.get(`/api/implappointment/get-all-schedule-per-branch/${props.branch}/${props.userid}`)
   }
   public handleSelectedSchedule(id: number){
     return this.axios.delete(`/api/implappointment/remove-selected-schedule/${id}`)
@@ -181,6 +184,9 @@ export class AbysApi {
   public FindFollowUpsByAPId(id: number) {
     return this.axios.get(`/api/implappointment/find-follow-ups-by-appointment-id/${id}`)
   }
+  public FindPrimaryAppointments(id: number) {
+    return this.axios.get(`/api/implappointment/find-primary-appointments/${id}`)
+  }
   public DeleteService(id: number) {
     return this.axios.delete(`/api/implservices/delete-service/${id}`)
   }
@@ -222,5 +228,21 @@ export class AbysApi {
   public PushToArchive(id: number) {
     return this.axios
     .put(`/api/implappointment/push-to-archive/${id}`)
+  }
+  public activateServices(props : {
+    id: number, type: string
+  }) {
+    return this.axios.put(`/api/implservices/activate-service/${props.id}/${props.type}`)
+  }
+  public modifyPrimaryServiceDetails(props: {
+    id: number, serviceName: string
+  }) {
+    return this.axios.put(`/api/implservices/service-modification/${props.id}/${props.serviceName}`)
+  }
+  public GetAllRecordAllBranch(){
+    return this.axios.get('/api/implappointment/get-all-record-all-branch')
+  }
+  public deleteRecords(id: number){
+    return this.axios.delete(`/api/implappointment/delete-records/${id}`)
   }
 }

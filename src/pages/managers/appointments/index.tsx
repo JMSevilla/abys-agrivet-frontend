@@ -738,11 +738,8 @@ const Appointments: React.FC = () => {
                 >
                       <ControlledTabs
                     value={tabsValue}
+                    orientation="horizontal"
                     handleChange={(event: React.SyntheticEvent, newValue: number) => setTabsValue(newValue)}
-                    style={{
-                        marginTop: '10px',
-                        padding: '10px'
-                    }}
                     badgeContent={needToBeDoneCount}
                     tabsinject={
                         [
@@ -894,7 +891,12 @@ const Appointments: React.FC = () => {
                                     <Typography key={index} variant='body1' sx={{mb: 2}}>
                                         <span style={{marginRight:'8px'}}>&bull;</span>
                                         {
-                                            item.otherConcerns == "" || item.otherConcerns == null ? 'Nothing' : item.otherConcerns
+                                            item.otherConcerns == "" || item.otherConcerns == null ? 'Nothing' : 
+                                            <div
+                                            dangerouslySetInnerHTML={{
+                                              __html: JSON.parse(item.otherConcerns)  
+                                            }}
+                                            ></div>
                                         }
                                     </Typography>
                                     </>

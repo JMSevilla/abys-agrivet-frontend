@@ -19,8 +19,11 @@ const Dashboard: React.FC = () => {
     const [doneAppointments, setDoneAppointments] = useState(0)
     const [walkin, setWalkin] = useState(0)
     const GetAllSchedulePerBranch = useApiCallBack(
-      async (api, branch: number) =>
-      await api.abys.findAllSchedulePerBranch(branch)
+      async (api, args: {
+        branch: number,
+        userid?: number
+      }) =>
+      await api.abys.findAllSchedulePerBranch(args)
     )
     const countAppointments = useApiCallBack(
       async (api, args: {branch_id: number, type: string | undefined}) => await api.abys.CountAppointments(args)
@@ -33,7 +36,10 @@ const Dashboard: React.FC = () => {
       isHoliday?: boolean | undefined
     }>>([])
   const getallscheduleperbranches = () => {
-    GetAllSchedulePerBranch.execute(references?.branch).then((response) => {
+    GetAllSchedulePerBranch.execute({
+      branch: references?.branch,
+      userid: 0
+    }).then((response) => {
       if(response?.data?.length > 0){
             var chk = response?.data?.map((item:any) => {
                 return {

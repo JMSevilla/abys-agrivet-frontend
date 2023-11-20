@@ -137,6 +137,11 @@ const UserManagement: React.FC = () => {
             id: 3,
             access_level: 2,
             label: 'Managers'
+        },
+        {
+            id: 4,
+            access_level: 3,
+            label: 'Customers'
         }
     ])
     const globalSearch = (): Array<{id: number, firstname: string, lastname: string}> => {
