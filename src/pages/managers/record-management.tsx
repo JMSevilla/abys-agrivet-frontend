@@ -31,6 +31,7 @@ import {
 import moment from "moment";
 import { useEffect, useState, useMemo } from "react";
 import PageviewIcon from "@mui/icons-material/Pageview";
+import { AxiosResponse } from "axios";
 
 const RecordManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -153,12 +154,15 @@ const RecordManagement: React.FC = () => {
     });
   };
   function FuncFindAllRecordsPerBranch() {
-    findAllRecordAllBranch.execute().then((response) => {
-      setFeed(response?.data);
-    });
+    findAllRecordAllBranch
+      .execute()
+      .then((response: AxiosResponse | undefined) => {
+        // setFeed(response?.data);
+        console.log(response?.data);
+      });
   }
   useEffect(() => {
-    FuncFindAllRecordsPerBranch();
+    // FuncFindAllRecordsPerBranch();
     FuncGetAllBranchesToBeMapOnRadio();
   }, []);
   const columns: any[] = [
@@ -343,6 +347,7 @@ const RecordManagement: React.FC = () => {
         email: email,
         phone: phoneNumber,
       };
+      console.log(JSON.parse(petInfo));
       handeViewAllPrimaryAppointments(id);
       handleViewAllFollowUpsByApId(id);
       setSavedReferences(newSavedReferences);
@@ -356,16 +361,10 @@ const RecordManagement: React.FC = () => {
   const handleSelectedBranches = (event: any) => {
     const branchId = event.target.value;
     setPreLoad(!preload);
-    const nums = [6, 7, 8, 9, 10];
-    if (nums.includes(parseInt(branchId))) {
+    filterRecordsByBranch.execute(branchId).then((response) => {
       setPreLoad(false);
-      FuncFindAllRecordsPerBranch();
-    } else {
-      filterRecordsByBranch.execute(branchId).then((response) => {
-        setPreLoad(false);
-        setFeed(response.data);
-      });
-    }
+      setFeed(response.data);
+    });
   };
   const handleChangeTabs = (event: React.SyntheticEvent, newValue: number) => {
     setTabsValue(newValue);
@@ -526,31 +525,68 @@ const RecordManagement: React.FC = () => {
                           ))}
                       </UncontrolledCard>
                       {petInfoViewMore && (
-                        <UncontrolledCard style={{ marginTop: "10px" }}>
-                          <Typography variant="button">
-                            Pet Other info
-                          </Typography>
-                          <hr />
-                          {savedReferences?.service?.length > 0 &&
-                            savedReferences?.service.map((serv: any) => {
-                              const breakdown = JSON.parse(serv.serviceBranch);
-                              return (
-                                <>
-                                  {breakdown?.length > 0 &&
-                                    breakdown.map((bk: any) => (
-                                      <List sx={{ bgcolor: "lightgrey" }}>
-                                        <ListItem>
-                                          <ListItemText
-                                            primary={serv.serviceName}
-                                            secondary={bk.branchName}
-                                          />
-                                        </ListItem>
-                                      </List>
-                                    ))}
-                                </>
-                              );
-                            })}
-                        </UncontrolledCard>
+                        <>
+                          <UncontrolledCard style={{ marginTop: "10px" }}>
+                            <Typography variant="button">
+                              Services info
+                            </Typography>
+                            <hr />
+                            {savedReferences?.service?.length > 0 &&
+                              savedReferences?.service.map((serv: any) => {
+                                const breakdown = JSON.parse(
+                                  serv.serviceBranch
+                                );
+                                return (
+                                  <>
+                                    {breakdown?.length > 0 &&
+                                      breakdown.map((bk: any) => (
+                                        <List sx={{ bgcolor: "lightgrey" }}>
+                                          <ListItem>
+                                            <ListItemText
+                                              primary={serv.serviceName}
+                                              secondary={bk.branchName}
+                                            />
+                                          </ListItem>
+                                        </List>
+                                      ))}
+                                  </>
+                                );
+                              })}
+                          </UncontrolledCard>
+                          <UncontrolledCard style={{ marginTop: "10px" }}>
+                            <Typography variant="button">
+                              Pet other info
+                            </Typography>
+                            <hr />
+                            {savedReferences?.petInfo?.length > 0 &&
+                              savedReferences.petInfo.map((serv: any) => {
+                                return (
+                                  <List sx={{ bgcolor: "lightgrey" }}>
+                                    <ListItem>
+                                      <ListItemText
+                                        primary={serv.petType}
+                                        secondary={serv.breed}
+                                      />
+                                    </ListItem>
+                                    <ListItem>
+                                      <ListItemText
+                                        primary={"Gender"}
+                                        secondary={serv.gender}
+                                      />
+                                    </ListItem>
+                                    <ListItem>
+                                      <ListItemText
+                                        primary={"Birthdate"}
+                                        secondary={moment(serv.birthdate)
+                                          .subtract(1, "day")
+                                          .format("MMM Do YY")}
+                                      />
+                                    </ListItem>
+                                  </List>
+                                );
+                              })}
+                          </UncontrolledCard>
+                        </>
                       )}
                     </Grid>
                   </ControlledGrid>

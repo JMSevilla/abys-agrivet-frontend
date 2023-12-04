@@ -18,6 +18,9 @@ export const APPetInformationBaseSchema = z.object({
     petInfo: z.object({
         petType: requiredString('Kindly select pet'),
         petName: requiredString('Please provide pet name'),
+        breed: requiredString('Please provide breed.'),
+        gender: requiredString('Please provide gender.'),
+        birthdate: z.any(),
         vetName: z.string().optional(),
         otherConcerns: z.string().optional(),
     }).array()
