@@ -23,7 +23,7 @@ const HTTP_OPTIONS: HttpOptions = {
 
 export const httpClient = new Http({
   ...HTTP_OPTIONS,
-  baseURL: config.value.DEV_URL,
+  baseURL: config.value.PROD_URL,
 });
 
 export const useApiCallBack = <R, A extends unknown>(
