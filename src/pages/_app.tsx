@@ -77,10 +77,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const notifyAppointmentFeature = useApiCallBack((api) =>
     api.abys.getNotifyOnPageReload()
   );
-  const sendsmtpservice = useApiCallBack(
-    async (api, args: SMSVerificationProps) =>
-      await api.abys.SendSMSVerification(args)
-  );
   const sendReminder = useApiCallBack(
     async (
       api,
