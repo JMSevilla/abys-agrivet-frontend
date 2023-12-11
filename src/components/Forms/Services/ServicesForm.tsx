@@ -134,12 +134,13 @@ export const ServiceFormField = () => {
           mt: 2,
           mb: 2,
         }}
-        children="SAVE"
         variant="outlined"
         size="small"
         disabled={!isValid}
         onClick={handleContinue}
-      />
+      >
+        SAVE
+      </NormalButton>
       <ControlledBackdrop open={loading} />
     </FormProvider>
   );

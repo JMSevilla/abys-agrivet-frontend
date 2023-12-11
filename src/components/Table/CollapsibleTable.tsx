@@ -88,10 +88,16 @@ const Row = (props: {
   row: ReturnType<typeof createData>;
   handleChangeEdit: any;
   handleChangeDelete: any;
-  handleChangeActivation: any
-  handleAddNewBranch: any
+  handleChangeActivation: any;
+  handleAddNewBranch: any;
 }) => {
-  const { row, handleChangeEdit, handleChangeDelete, handleChangeActivation, handleAddNewBranch } = props;
+  const {
+    row,
+    handleChangeEdit,
+    handleChangeDelete,
+    handleChangeActivation,
+    handleAddNewBranch,
+  } = props;
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -122,11 +128,30 @@ const Row = (props: {
         </TableCell>
         <TableCell align="right">
           <div style={{ display: "flex", justifyContent: "right" }}>
-            <NormalButton onClick={() => handleChangeEdit(row)} children={<>Modify</>} variant='outlined' size='small' />&nbsp;
-            <NormalButton onClick={() => handleChangeActivation(row.id, row.serviceStatus)} children={
-              row.serviceStatus == 1 ? 'Deactivate' : 'Activate'
-            } variant='outlined' size='small' />&nbsp;
-            <NormalButton onClick={() => handleChangeDelete(row.id)} children={<>DELETE</>} color='error' variant='outlined' size='small' />
+            <NormalButton
+              onClick={() => handleChangeEdit(row)}
+              variant="outlined"
+              size="small"
+            >
+              Modify
+            </NormalButton>
+            &nbsp;
+            <NormalButton
+              onClick={() => handleChangeActivation(row.id, row.serviceStatus)}
+              variant="outlined"
+              size="small"
+            >
+              {row.serviceStatus == 1 ? "Deactivate" : "Activate"}
+            </NormalButton>
+            &nbsp;
+            <NormalButton
+              onClick={() => handleChangeDelete(row.id)}
+              color="error"
+              variant="outlined"
+              size="small"
+            >
+              DELETE
+            </NormalButton>
           </div>
         </TableCell>
       </TableRow>
@@ -139,7 +164,7 @@ const Row = (props: {
               </Typography>
               {/* <NormalButton children='ADD' variant='outlined' size='small' onClick={() => handleAddNewBranch()} sx={{ float: 'right', mt: 2, mb: 2 }}  /> */}
               <Table size="small" aria-label="dev tickets">
-                <TableHead >
+                <TableHead>
                   <TableRow>
                     <TableCell>Branch ID</TableCell>
                     <TableCell>Branch availability</TableCell>
@@ -173,8 +198,8 @@ type CollapsibleTableProps = {
   onRowsPerPageChange?: any;
   handleChangeEdit?: any;
   handleChangeDeletion?: any;
-  handleChangeActivation?: any
-  handleAddNewBranch?: any
+  handleChangeActivation?: any;
+  handleAddNewBranch?: any;
   columns?: Array<{ field: string; align: boolean }>;
 };
 

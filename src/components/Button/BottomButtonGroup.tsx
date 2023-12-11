@@ -3,63 +3,65 @@ import { Grid } from "@mui/material";
 import { useActiveSteps } from "@/utils/hooks/useActiveStep";
 
 export type BottomButtonGroupsProps = {
-    continueButtonLabel?: string;
-    onContinue?: () => any;
-    onBack?: () => boolean
-    hideBack?: boolean
-    disabledContinue?: boolean
-    max_array_length: number
-    hideContinue?: boolean
-}
+  continueButtonLabel?: string;
+  onContinue?: () => any;
+  onBack?: () => boolean;
+  hideBack?: boolean;
+  disabledContinue?: boolean;
+  max_array_length: number;
+  hideContinue?: boolean;
+};
 
 export const BottomButtonGroup: React.FC<BottomButtonGroupsProps> = ({
-    continueButtonLabel = 'Continue',
-    onContinue,
-    onBack,
-    hideBack,
-    disabledContinue,
-    max_array_length,
-    hideContinue = false
+  continueButtonLabel = "Continue",
+  onContinue,
+  onBack,
+  hideBack,
+  disabledContinue,
+  max_array_length,
+  hideContinue = false,
 }) => {
-    const { next, previous } = useActiveSteps(max_array_length)
-    const handleContinue = () => {
-        if(onContinue !== undefined){
-            if(!onContinue()) return;
-        }
-        next()
+  const { next, previous } = useActiveSteps(max_array_length);
+  const handleContinue = () => {
+    if (onContinue !== undefined) {
+      if (!onContinue()) return;
     }
-    const handleBack = () => {
-        if(onBack !== undefined){
-            if(!onBack()) return;
-        }
-        previous()
+    next();
+  };
+  const handleBack = () => {
+    if (onBack !== undefined) {
+      if (!onBack()) return;
     }
-    return (
-        <>
-            {!hideContinue && (
-                <Grid item xs={8} display='flex' justifyContent='center'>
-                <NormalButton 
-                    sx={{ mx: 'auto', mt: 2, width: [, 300]}}
-                    color='primary'
-                    variant='outlined'
-                    fullWidth
-                    disabled={disabledContinue}
-                    onClick={handleContinue}
-                    children={continueButtonLabel}
-                    />
-                </Grid>
-            )}
-            {!hideBack && (
-                <Grid item xs={8} display='flex' justifyContent='center'>
-                    <NormalButton 
-                    sx={{ mx: 'auto', mt: 2, width: [, 300]}}
-                    fullWidth
-                    variant='text'
-                    onClick={handleBack}
-                    children='Back'
-                    />
-                </Grid>
-            )}
-        </>
-    )
-}
+    previous();
+  };
+  return (
+    <>
+      {!hideContinue && (
+        <Grid item xs={8} display="flex" justifyContent="center">
+          <NormalButton
+            sx={{ mx: "auto", mt: 2, width: [, 300] }}
+            color="primary"
+            variant="outlined"
+            fullWidth
+            disabled={disabledContinue}
+            onClick={handleContinue}
+          >
+            {continueButtonLabel}
+          </NormalButton>
+        </Grid>
+      )}
+      {!hideBack && (
+        <Grid item xs={8} display="flex" justifyContent="center">
+          <NormalButton
+            sx={{ mx: "auto", mt: 2, width: [, 300] }}
+            fullWidth
+            variant="text"
+            onClick={handleBack}
+          >
+            Back
+          </NormalButton>
+        </Grid>
+      )}
+    </>
+  );
+};

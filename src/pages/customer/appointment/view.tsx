@@ -128,7 +128,6 @@ const View: React.FC = () => {
               <NormalButton
                 size="small"
                 variant="outlined"
-                children="View more"
                 onClick={() =>
                   handleViewMore(
                     params.row.id,
@@ -140,7 +139,9 @@ const View: React.FC = () => {
                     params.row.managersId
                   )
                 }
-              />
+              >
+                View more
+              </NormalButton>
             </div>
           </>
         );
@@ -303,9 +304,10 @@ const View: React.FC = () => {
                 }}
                 variant="text"
                 size="small"
-                children="View all follow-ups"
                 onClick={handleViewAllFollowUpsByApId}
-              />
+              >
+                View all follow-ups
+              </NormalButton>
               <FollowUpCollapsibleTable
                 data={followupFeed}
                 columns={columns}

@@ -96,11 +96,12 @@ const PetInformationForm = () => {
         <NormalButton
           sx={{ float: "right", mt: 2, mb: 2 }}
           size="small"
-          children="ADD NEW PET"
           variant="outlined"
           startIcon={<PetsIcon />}
           onClick={() => addMorePets()}
-        />
+        >
+          ADD NEW PET
+        </NormalButton>
         <Container sx={{ mt: 8 }}>
           {fields.map((item, i) => (
             <>
@@ -113,9 +114,10 @@ const PetInformationForm = () => {
                     variant="outlined"
                     size="small"
                     color="error"
-                    children="REMOVE"
                     onClick={() => remove(i)}
-                  />
+                  >
+                    REMOVE
+                  </NormalButton>
                   <ControlledGrid>
                     <Grid item xs={6}>
                       <ControlledTextField
