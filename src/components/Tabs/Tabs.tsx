@@ -49,11 +49,11 @@ type ControlledTabsProps = {
   handleChange: (event: React.SyntheticEvent, newValue: number) => void;
   children: React.ReactNode;
   style?: React.CSSProperties;
-  badgeContent?: number
-  orientation: "horizontal" | "vertical" | undefined
+  badgeContent?: number;
+  orientation?: "horizontal" | "vertical" | undefined;
 };
 
-type CombinedProps = ControlledTabsProps & TabsProps ;
+type CombinedProps = ControlledTabsProps & TabsProps;
 
 export const ControlledTabs: React.FC<CombinedProps> = ({
   value,
@@ -61,14 +61,25 @@ export const ControlledTabs: React.FC<CombinedProps> = ({
   tabsinject,
   children,
   badgeContent,
-  orientation,
+  orientation = "horizontal",
   ...rest
 }) => {
   return (
-    <Box sx={ orientation == 'horizontal' ? {width: '100%'}: { flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}>
+    <Box
+      sx={
+        orientation == "horizontal"
+          ? { width: "100%" }
+          : {
+              flexGrow: 1,
+              bgcolor: "background.paper",
+              display: "flex",
+              height: 224,
+            }
+      }
+    >
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
-        orientation={orientation}
+          orientation={orientation}
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
@@ -76,12 +87,14 @@ export const ControlledTabs: React.FC<CombinedProps> = ({
         >
           {tabsinject.map((item: any, index: any) => (
             <Tab
-             label={
-              <Badge badgeContent={badgeContent} color='primary'>
-                {item.label}
-              </Badge>
-            } 
-            {...a11yProps(index)} key={index} />
+              label={
+                <Badge badgeContent={badgeContent} color="primary">
+                  {item.label}
+                </Badge>
+              }
+              {...a11yProps(index)}
+              key={index}
+            />
           ))}
         </Tabs>
       </Box>
