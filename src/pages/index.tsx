@@ -1,6 +1,5 @@
 import HomeHeroSection from "@/components/Content/Home/HeroSection";
 import HomeFeatureSection from "@/components/Content/Home/FeatureSection";
-import { getNotificationToSend } from "@/utils/notification-api";
 import { GetServerSideProps } from "next";
 import {
   ArrowPathIcon,
