@@ -205,7 +205,6 @@ const RecordManagement: React.FC = () => {
               <NormalButton
                 size="small"
                 variant="outlined"
-                children="View more"
                 onClick={() =>
                   handleViewMore(
                     params.row.id,
@@ -219,15 +218,18 @@ const RecordManagement: React.FC = () => {
                     params.row.phoneNumber
                   )
                 }
-              />
+              >
+                View more
+              </NormalButton>
               &nbsp;
               <NormalButton
                 variant="outlined"
                 size="small"
-                children="Delete"
                 color="error"
                 onClick={() => handleDelete(params.row.id)}
-              />
+              >
+                Delete
+              </NormalButton>
             </div>
           </>
         );
@@ -418,8 +420,9 @@ const RecordManagement: React.FC = () => {
                               onChange={handleSelectedBranches}
                             >
                               {radioBranches?.length > 0 &&
-                                radioBranches?.map((item: any) => (
+                                radioBranches?.map((item: any, index) => (
                                   <FormControlLabel
+                                    key={index}
                                     value={item?.branch_id}
                                     control={<Radio />}
                                     label={item?.branchName}
@@ -503,26 +506,29 @@ const RecordManagement: React.FC = () => {
                           Pets List
                         </Typography>
                         {savedReferences?.petInfo?.length > 0 &&
-                          savedReferences?.petInfo.map((item: any) => (
-                            <List sx={{ bgcolor: "lightgrey" }}>
-                              <ListItem
-                                secondaryAction={
-                                  <IconButton
-                                    onClick={handleViewMorePetInfo}
-                                    edge="end"
-                                    aria-label="View more"
-                                  >
-                                    <PageviewIcon />
-                                  </IconButton>
-                                }
-                              >
-                                <ListItemText
-                                  primary={item.petName}
-                                  secondary={item.petType}
-                                />
-                              </ListItem>
-                            </List>
-                          ))}
+                          savedReferences?.petInfo.map(
+                            (item: any, index: any) => (
+                              <List sx={{ bgcolor: "lightgrey" }} key={index}>
+                                <ListItem
+                                  key={index}
+                                  secondaryAction={
+                                    <IconButton
+                                      onClick={handleViewMorePetInfo}
+                                      edge="end"
+                                      aria-label="View more"
+                                    >
+                                      <PageviewIcon />
+                                    </IconButton>
+                                  }
+                                >
+                                  <ListItemText
+                                    primary={item.petName}
+                                    secondary={item.petType}
+                                  />
+                                </ListItem>
+                              </List>
+                            )
+                          )}
                       </UncontrolledCard>
                       {petInfoViewMore && (
                         <>
@@ -539,8 +545,11 @@ const RecordManagement: React.FC = () => {
                                 return (
                                   <>
                                     {breakdown?.length > 0 &&
-                                      breakdown.map((bk: any) => (
-                                        <List sx={{ bgcolor: "lightgrey" }}>
+                                      breakdown.map((bk: any, index: any) => (
+                                        <List
+                                          sx={{ bgcolor: "lightgrey" }}
+                                          key={index}
+                                        >
                                           <ListItem>
                                             <ListItemText
                                               primary={serv.serviceName}
@@ -559,32 +568,37 @@ const RecordManagement: React.FC = () => {
                             </Typography>
                             <hr />
                             {savedReferences?.petInfo?.length > 0 &&
-                              savedReferences.petInfo.map((serv: any) => {
-                                return (
-                                  <List sx={{ bgcolor: "lightgrey" }}>
-                                    <ListItem>
-                                      <ListItemText
-                                        primary={serv.petType}
-                                        secondary={serv.breed}
-                                      />
-                                    </ListItem>
-                                    <ListItem>
-                                      <ListItemText
-                                        primary={"Gender"}
-                                        secondary={serv.gender}
-                                      />
-                                    </ListItem>
-                                    <ListItem>
-                                      <ListItemText
-                                        primary={"Birthdate"}
-                                        secondary={moment(serv.birthdate)
-                                          .subtract(1, "day")
-                                          .format("MMM Do YY")}
-                                      />
-                                    </ListItem>
-                                  </List>
-                                );
-                              })}
+                              savedReferences.petInfo.map(
+                                (serv: any, index: any) => {
+                                  return (
+                                    <List
+                                      key={index}
+                                      sx={{ bgcolor: "lightgrey" }}
+                                    >
+                                      <ListItem>
+                                        <ListItemText
+                                          primary={serv.petType}
+                                          secondary={serv.breed}
+                                        />
+                                      </ListItem>
+                                      <ListItem>
+                                        <ListItemText
+                                          primary={"Gender"}
+                                          secondary={serv.gender}
+                                        />
+                                      </ListItem>
+                                      <ListItem>
+                                        <ListItemText
+                                          primary={"Birthdate"}
+                                          secondary={moment(serv.birthdate)
+                                            .subtract(1, "day")
+                                            .format("MMM Do YY")}
+                                        />
+                                      </ListItem>
+                                    </List>
+                                  );
+                                }
+                              )}
                           </UncontrolledCard>
                         </>
                       )}

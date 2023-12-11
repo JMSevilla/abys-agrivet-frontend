@@ -38,7 +38,7 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
     DrawerHeader,
     sidebarConfig,
     subsidebarConfig,
-    globals
+    globals,
   } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [branchPath, setBranchPath] = useBranchPath();
@@ -67,12 +67,10 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
     handleSelectedIndex(event, innerIndex);
     setBranchPath(encrypt(uri));
   };
-  const handlePushOnSettings = (
-    uri: string
-  ) => {
-    router.push(uri)
-    setBranchPath(encrypt(uri))
-  }
+  const handlePushOnSettings = (uri: string) => {
+    router.push(uri);
+    setBranchPath(encrypt(uri));
+  };
   return (
     <>
       <Drawer
@@ -222,11 +220,10 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
             </List>
             <Divider className="bg-sideBarTabHover" />
             <List>
-              {
-                globals?.storedType == 1 && 
+              {globals?.storedType == 1 &&
                 sidebarSettingsArea?.length > 0 &&
                 sidebarSettingsArea.map((item, index) => (
-                  <Box className="flex flex-col items-center">
+                  <Box key={index} className="flex flex-col items-center">
                     <ListItem
                       key={item.text}
                       disablePadding
@@ -266,8 +263,7 @@ const DashboardSidebar: React.FC<AdminSidebarProps> = (props) => {
                       </ListItemButton>
                     </ListItem>
                   </Box>
-                ))
-              }
+                ))}
             </List>
           </Box>
           <Box className="flex flex-col py-2 gap-2">

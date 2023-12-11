@@ -270,8 +270,9 @@ const UserManagement: React.FC = () => {
                       onChange={handleSelectUserAccess}
                     >
                       {userAccess?.length > 0 &&
-                        userAccess.map((item) => (
+                        userAccess.map((item, index) => (
                           <FormControlLabel
+                            key={index}
                             value={item.access_level}
                             control={<Radio />}
                             label={item.label}

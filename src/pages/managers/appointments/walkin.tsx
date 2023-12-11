@@ -841,7 +841,6 @@ const WalkedIn: React.FC = () => {
                 size="medium"
                 color="success"
                 fullWidth
-                children="Proceed appointment"
                 onClick={() =>
                   handleProceedAppointment(
                     params.row.id,
@@ -862,16 +861,19 @@ const WalkedIn: React.FC = () => {
                     params.row.updated_at
                   )
                 }
-              />{" "}
+              >
+                Proceed appointment
+              </NormalButton>{" "}
               <br />
               <NormalButton
                 variant="text"
                 size="medium"
                 color="error"
                 fullWidth
-                children="Cancel appointment"
                 onClick={() => handleCancelAppointment(params.row.id)}
-              />
+              >
+                Cancel appointment
+              </NormalButton>
             </Popover>
           </>
         );
@@ -1005,9 +1007,10 @@ const WalkedIn: React.FC = () => {
                 size="small"
                 variant="text"
                 color="success"
-                children="View lobby"
                 onClick={() => setViewLobby(!viewLobby)}
-              />
+              >
+                View lobby
+              </NormalButton>
             </div>
             {/* walk in appointment form */}
             <UncontrolledCard style={{ marginTop: "20px" }}>
@@ -1020,10 +1023,11 @@ const WalkedIn: React.FC = () => {
                 }}
                 size="small"
                 variant="text"
-                children={showSchedule ? "Hide Calendar" : "Show Calendar"}
                 color={showSchedule ? "error" : "info"}
                 onClick={() => setShowSchedule(!showSchedule)}
-              />
+              >
+                {showSchedule ? "Hide Calendar" : "Show Calendar"}
+              </NormalButton>
               <hr />
               {showSchedule && (
                 <SchedulerCalendar
@@ -1131,14 +1135,15 @@ const WalkedIn: React.FC = () => {
               <NormalButton
                 size="small"
                 variant="text"
-                children="Add new pet"
                 sx={{
                   float: "right",
                   mt: 2,
                   mb: 2,
                 }}
                 onClick={addNewPetInformation}
-              />
+              >
+                Add new pet
+              </NormalButton>
               {reverseFields.map((item, i) => (
                 <div
                   style={{
@@ -1159,9 +1164,10 @@ const WalkedIn: React.FC = () => {
                           variant="outlined"
                           size="small"
                           color="error"
-                          children="REMOVE"
                           onClick={() => remove(i)}
-                        />
+                        >
+                          REMOVE
+                        </NormalButton>
                         <Typography variant="overline">
                           Kindly complete the pet information form.
                         </Typography>
@@ -1353,9 +1359,10 @@ const WalkedIn: React.FC = () => {
               }}
               size="small"
               variant="outlined"
-              children="APPOINT"
               onClick={handleAppoint}
-            />
+            >
+              APPOINT
+            </NormalButton>
             <ControlledModal
               open={asks}
               buttonTextAccept="YES"

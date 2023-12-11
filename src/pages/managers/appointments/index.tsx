@@ -549,9 +549,10 @@ const Appointments: React.FC = () => {
               <NormalButton
                 size="small"
                 variant="outlined"
-                children="View more"
                 onClick={() => console.log("follow-up view more")}
-              />
+              >
+                View more
+              </NormalButton>
             </div>
           </>
         );
@@ -657,7 +658,6 @@ const Appointments: React.FC = () => {
               <NormalButton
                 size="small"
                 variant="outlined"
-                children="View more"
                 onClick={() =>
                   handleViewMore(
                     params.row.id,
@@ -669,7 +669,9 @@ const Appointments: React.FC = () => {
                     params.row.managersId
                   )
                 }
-              />
+              >
+                View more
+              </NormalButton>
             </div>
           </>
         );
@@ -854,16 +856,18 @@ const Appointments: React.FC = () => {
                 <NormalButton
                   variant="text"
                   size="small"
-                  children="Today Appointments"
                   onClick={handleTodaysAppointment}
-                />{" "}
+                >
+                  Today Appointments
+                </NormalButton>{" "}
                 |
                 <NormalButton
                   variant="text"
                   size="small"
-                  children="Get All Appointments"
                   onClick={() => FuncGetAppointmentPerBranch()}
-                />
+                >
+                  Get All Appointments
+                </NormalButton>
               </div>
               <ProjectTable
                 pageSize={5}
@@ -975,25 +979,27 @@ const Appointments: React.FC = () => {
                                   variant="outlined"
                                   color="error"
                                   size="small"
-                                  children="CANCEL APPOINTMENT"
                                   onClick={() =>
                                     handleSessions(
                                       "cancel_appointment",
                                       savedReferences.id
                                     )
                                   }
-                                />
+                                >
+                                  CANCEL APPOINTMENT
+                                </NormalButton>
                                 <NormalButton
                                   sx={{ float: "right", mt: 3, mb: 3 }}
                                   variant="outlined"
                                   color="primary"
                                   size="small"
-                                  children="START SESSION"
                                   startIcon={<PlayCircleFilledIcon />}
                                   onClick={() =>
                                     handleSessions("start", savedReferences.id)
                                   }
-                                />
+                                >
+                                  START SESSION
+                                </NormalButton>
                               </>
                             ) : savedReferences?.session == 1 ? (
                               <>
@@ -1008,25 +1014,27 @@ const Appointments: React.FC = () => {
                                   variant="outlined"
                                   color="error"
                                   size="small"
-                                  children="CANCEL APPOINTMENT"
                                   onClick={() =>
                                     handleSessions(
                                       "cancel_appointment",
                                       savedReferences.id
                                     )
                                   }
-                                />
+                                >
+                                  CANCEL APPOINTMENT
+                                </NormalButton>
                                 <NormalButton
                                   sx={{ float: "right", mt: 3, mb: 3 }}
                                   variant="outlined"
                                   color="error"
                                   size="small"
-                                  children="END SESSION"
                                   startIcon={<StopIcon />}
                                   onClick={() =>
                                     handleSessions("end", savedReferences.id)
                                   }
-                                />
+                                >
+                                  END SESSION
+                                </NormalButton>
                               </>
                             ) : (
                               savedReferences?.session == 2 && (
@@ -1041,9 +1049,10 @@ const Appointments: React.FC = () => {
                                       }
                                       size="small"
                                       onClick={handleDone}
-                                      children="DONE"
                                       startIcon={<CheckCircleIcon />}
-                                    />
+                                    >
+                                      DONE
+                                    </NormalButton>
                                   )}
                                   <NormalButton
                                     sx={{ float: "right", mt: 3, mb: 3, mr: 2 }}
@@ -1054,13 +1063,12 @@ const Appointments: React.FC = () => {
                                     }
                                     size="small"
                                     onClick={() => setFollowUp(!followup)}
-                                    children={
-                                      followup
-                                        ? "CANCEL FOLLOW-UP APPOINTMENT"
-                                        : "CREATE FOLLOW-UP APPOINTMENT"
-                                    }
                                     startIcon={<FollowTheSignsIcon />}
-                                  />
+                                  >
+                                    {followup
+                                      ? "CANCEL FOLLOW-UP APPOINTMENT"
+                                      : "CREATE FOLLOW-UP APPOINTMENT"}
+                                  </NormalButton>
                                 </div>
                               )
                             )}
@@ -1345,14 +1353,15 @@ const Appointments: React.FC = () => {
                                 <NormalButton
                                   size="small"
                                   variant="outlined"
-                                  children="SAVE"
                                   sx={{
                                     float: "right",
                                     mt: 2,
                                     mb: 2,
                                   }}
                                   onClick={handleSave}
-                                />
+                                >
+                                  SAVE
+                                </NormalButton>
                               </UncontrolledCard>
                             </div>
                           )}
