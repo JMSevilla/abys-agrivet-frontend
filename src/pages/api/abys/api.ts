@@ -8,7 +8,7 @@ export class AbysApi {
   }
   public SendSMSVerification(props: SMSVerificationProps) {
     return this.axios.post(
-      `/api/implverification/send-verification-code-sms/${props.verificationCredentials.email}/${props.verificationCredentials.phoneNumber}`,
+      `/api/implverification/send-verification-code-sms`,
       props
     );
   }
