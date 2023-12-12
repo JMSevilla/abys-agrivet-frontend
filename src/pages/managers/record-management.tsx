@@ -349,7 +349,7 @@ const RecordManagement: React.FC = () => {
         email: email,
         phone: phoneNumber,
       };
-      console.log(JSON.parse(petInfo));
+      console.log(services);
       handeViewAllPrimaryAppointments(id);
       handleViewAllFollowUpsByApId(id);
       setSavedReferences(newSavedReferences);
@@ -364,6 +364,7 @@ const RecordManagement: React.FC = () => {
     const branchId = event.target.value;
     setPreLoad(!preload);
     filterRecordsByBranch.execute(branchId).then((response) => {
+      console.log(response.data);
       setPreLoad(false);
       setFeed(response.data);
     });
@@ -542,22 +543,28 @@ const RecordManagement: React.FC = () => {
                                 const breakdown = JSON.parse(
                                   serv.serviceBranch
                                 );
+                                console.log(breakdown);
                                 return (
                                   <>
                                     {breakdown?.length > 0 &&
-                                      breakdown.map((bk: any, index: any) => (
-                                        <List
-                                          sx={{ bgcolor: "lightgrey" }}
-                                          key={index}
-                                        >
-                                          <ListItem>
-                                            <ListItemText
-                                              primary={serv.serviceName}
-                                              secondary={bk.branchName}
-                                            />
-                                          </ListItem>
-                                        </List>
-                                      ))}
+                                      breakdown
+                                        .filter(
+                                          (item: any) =>
+                                            item.branch_id == references?.branch
+                                        )
+                                        .map((bk: any, index: any) => (
+                                          <List
+                                            sx={{ bgcolor: "lightgrey" }}
+                                            key={index}
+                                          >
+                                            <ListItem>
+                                              <ListItemText
+                                                primary={serv.serviceName}
+                                                secondary={bk.branchName}
+                                              />
+                                            </ListItem>
+                                          </List>
+                                        ))}
                                   </>
                                 );
                               })}

@@ -46,13 +46,13 @@ export const CheckPickVerification = () => {
   const { next } = useActiveSteps(MAX_FP_STEPS);
   const handleContinue = () => {
     const values = getValues();
-    const obj = {
+    const obj: SMSVerificationProps = {
       email: fp?.email,
       code: "auto-generated-server-side",
       resendCount: 0,
       isValid: 1,
       type: selectedCard == 1 ? "email" : "sms",
-      phoneNumber: values.phoneNumber,
+      phoneNumber: values.phoneNumber !== undefined ? values.phoneNumber : "",
     };
     setLoading(!loading);
     sendsmtpservice.execute(obj).then((i) => {
