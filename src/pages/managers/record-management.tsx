@@ -33,6 +33,7 @@ import { useEffect, useState, useMemo } from "react";
 import PageviewIcon from "@mui/icons-material/Pageview";
 import { AxiosResponse } from "axios";
 
+
 const RecordManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [preload, setPreLoad] = useState(false);
@@ -104,6 +105,7 @@ const RecordManagement: React.FC = () => {
     return filteredFollowUps;
   };
 
+
   const globalSearchFollowUps = (): Array<{
     id: number;
     customerName: string;
@@ -117,12 +119,15 @@ const RecordManagement: React.FC = () => {
     return filteredFollowUps;
   };
 
+
   const filteredDistributedFollowUps:
     | Array<{ id: number; customerName: string }>
     | [] = searched ? globalSearch() : feed;
 
+
   const filteredFollowUps: Array<{ id: number; customerName: string }> | [] =
     searched ? globalSearch() : followupFeed;
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -532,113 +537,36 @@ const RecordManagement: React.FC = () => {
                           )}
                       </UncontrolledCard>
                       {petInfoViewMore && (
-                        <>
-                          <UncontrolledCard style={{ marginTop: "10px" }}>
-                            <Typography variant="button">
-                              Services info
-                            </Typography>
-                            <hr />
-                            {savedReferences?.service?.length > 0 &&
-                              savedReferences?.service.map((serv: any) => {
-                                const breakdown = JSON.parse(
-                                  serv.serviceBranch
-                                );
-                                console.log(breakdown);
-                                return (
-                                  <>
-                                    {breakdown?.length > 0 &&
-                                      breakdown
-                                        .filter(
-                                          (item: any) =>
-                                            item.branch_id == references?.branch
-                                        )
-                                        .map((bk: any, index: any) => (
-                                          <List
-                                            sx={{ bgcolor: "lightgrey" }}
-                                            key={index}
-                                          >
-                                            <ListItem>
-                                              <ListItemText
-                                                primary={serv.serviceName}
-                                                secondary={bk.branchName}
-                                              />
-                                            </ListItem>
-                                          </List>
-                                        ))}
-                                  </>
-                                );
-                              })}
-                          </UncontrolledCard>
-                          <UncontrolledCard style={{ marginTop: "10px" }}>
-                            <Typography variant="button">
-                              Pet other info
-                            </Typography>
-                            <hr />
-                            {savedReferences?.petInfo?.length > 0 &&
-                              savedReferences.petInfo.map(
-                                (serv: any, index: any) => {
-                                  return (
-                                    <List
-                                      key={index}
-                                      sx={{ bgcolor: "lightgrey" }}
-                                    >
-                                      <ListItem>
-                                        <ListItemText
-                                          primary={serv.petType}
-                                          secondary={serv.breed}
-                                        />
-                                      </ListItem>
-                                      <ListItem>
-                                        <ListItemText
-                                          primary={"Gender"}
-                                          secondary={serv.gender}
-                                        />
-                                      </ListItem>
-                                      <ListItem>
-                                        <ListItemText
-                                          primary={"Birthdate"}
-                                          secondary={moment(serv.birthdate)
-                                            .subtract(1, "day")
-                                            .format("MMM Do YY")}
-                                        />
-                                      </ListItem>
-                                    </List>
-                                  );
-                                }
-                              )}
-                          </UncontrolledCard>
-                        </>
+                        <UncontrolledCard style={{ marginTop: "10px" }}>
+                          <Typography variant="button">
+                            Services and Branch
+                          </Typography>
+                          <hr />
+                          {savedReferences?.service?.length > 0 &&
+                            savedReferences?.service.map((serv: any) => {
+                              console.log(serv)
+                              const breakdown = JSON.parse(serv.serviceBranch);
+                              const filtered = breakdown?.length > 0 && breakdown.filter((item: any) => item.branch_id === references.branch)
+                              return (
+                                <>
+                                  {filtered?.length > 0 &&
+                                    filtered.map((bk: any) => (
+                                      <List sx={{ bgcolor: "lightgrey" }}>
+                                        <ListItem>
+                                          <ListItemText
+                                            primary={serv.serviceName}
+                                            secondary={bk.branchName}
+                                          />
+                                        </ListItem>
+                                      </List>
+                                    ))}
+                                </>
+                              );
+                            })}
+                        </UncontrolledCard>
                       )}
                     </Grid>
                   </ControlledGrid>
-                  <UncontrolledCard
-                    style={{
-                      marginTop: "10px",
-                    }}
-                  >
-                    <Typography variant="caption" gutterBottom>
-                      Follow-up appointment
-                    </Typography>
-                    <div style={{ display: "inline" }}>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder="Search"
-                        fullWidth
-                        sx={{ mb: 2 }}
-                        onChange={handleSearch}
-                      ></TextField>
-                    </div>
-                    <FollowUpCollapsibleTable
-                      data={filteredFollowUps}
-                      columns={columns}
-                      pg={pg}
-                      rpg={rpg}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      handleFollowUpSessions={() => {}}
-                    />
-                  </UncontrolledCard>
                   <UncontrolledCard
                     style={{
                       marginTop: "10px",
@@ -649,6 +577,35 @@ const RecordManagement: React.FC = () => {
                     </Typography>
                     {gridPrimaryList}
                   </UncontrolledCard>
+                  <UncontrolledCard
+                    style={{
+                      marginTop: "10px",
+                    }}
+                  >
+                    <Typography variant="caption" gutterBottom>
+                      Follow-up appointment
+                    </Typography>
+                    {/*<div style={{ display: "inline" }}>
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        placeholder="Search"
+                        fullWidth
+                        sx={{ mb: 2 }}
+                        onChange={handleSearch}
+                      ></TextField>
+                  </div>*/}
+                    <FollowUpCollapsibleTable
+                      data={filteredFollowUps}
+                      columns={columns}
+                      pg={pg}
+                      rpg={rpg}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      handleFollowUpSessions={() => {}}
+                    />
+                  </UncontrolledCard>
+                  
                 </ControlledModal>
               </Container>
             )}
@@ -658,5 +615,6 @@ const RecordManagement: React.FC = () => {
     </>
   );
 };
+
 
 export default RecordManagement;

@@ -255,6 +255,7 @@ const Services: React.FC = () => {
                 Services Category Management
               </Typography>
               <ControlledTabs
+                orientation="horizontal"
                 value={tabsValue}
                 handleChange={handleTabsValue}
                 style={{

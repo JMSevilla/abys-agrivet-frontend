@@ -119,6 +119,14 @@ export const sidebarList: sidebarProps[] = [
       },
     ],
   },
+  {
+    objectID: 4,
+    name: 'Record Management',
+    title: 'Record',
+    uri: '/managers/record-management',
+    dropDown: false,
+    icon : <AssessmentIcon className="text-white" />
+  }
 ];
 
 export const sidebarExpand: sidebarExpandProps[] = [

@@ -2,10 +2,7 @@ import HomeHeroSection from "@/components/Content/Home/HeroSection";
 import HomeFeatureSection from "@/components/Content/Home/FeatureSection";
 import { GetServerSideProps } from "next";
 import {
-  ArrowPathIcon,
-  CloudArrowUpIcon,
-  FingerPrintIcon,
-  LockClosedIcon,
+  MapPinIcon
 } from "@heroicons/react/24/outline";
 import HomeFeatureSectionSecondLayer from "@/components/Content/Home/FeatureSectionSecondLayer";
 import HomeFooterSection from "@/components/Content/Home/FooterSection";
@@ -21,28 +18,43 @@ import { ControlledBackdrop } from "@/components";
 const Home = () => {
   const features = [
     {
-      name: "Push to deploy",
+      name: "CALAMBA CITY, LAGUNA",
       description:
-        "Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.",
-      icon: CloudArrowUpIcon,
+        "National Highway, Halang, Calamba"
+        ,
+      icon: MapPinIcon,
+      phoneNumber: "(049) 502-1596",
+     
     },
     {
-      name: "SSL certificates",
+    name: "TAMBO, LIPA, BATANGAS CITY",
       description:
-        "Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.",
-      icon: LockClosedIcon,
+        "Purok 3, Brgy. Tambo, Lipa City"
+        ,
+      icon: MapPinIcon,
+      phoneNumber: "(043) 784-2709",
     },
     {
-      name: "Simple queues",
+      name: "SABANG, LIPA, BATANGAS CITY",
       description:
-        "Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.",
-      icon: ArrowPathIcon,
+        "Don Juan 2 building, Sabang",
+      icon: MapPinIcon,
+      phoneNumber: "(043) 784-2709",
     },
     {
-      name: "Advanced security",
+      name: "BATANGAS, BATANGAS CITY",
       description:
-        "Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.",
-      icon: FingerPrintIcon,
+        "Brgy. Sta Rita, Karsada",
+      icon: MapPinIcon,
+      phoneNumber: "(043) 723-5095",
+    },
+    {
+      name: "PALO ALTO, CALAMBA CITY",
+      description:
+        "Palo alto, Calamba"
+         ,
+      icon: MapPinIcon,
+      phoneNumber: "(043) 123-4567",
     },
   ];
   const viewer = useRef<any>(null);
@@ -71,10 +83,11 @@ const Home = () => {
         }
       });
     }
-  }, []);
-  useEffect(() => {
-    setPath("https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf");
-  }, []);
+   
+}, [])
+useEffect(() => {
+  setPath('https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf')
+}, []);
   useEffect(() => {
     setupCheckUsersDB({ location: "homepage" });
   }, []);

@@ -606,39 +606,40 @@ const WalkedIn: React.FC = () => {
       setIsLobby(false);
     }
     setBackdrop(false);
-    checkBeforeRemoving.execute(removeId).then((res) => {
-      if (res.data == 200) {
-        mutate(removeId, {
-          onSuccess: (response: any) => {
-            if (response.data == 200) {
-              handleOnToast(
-                "Successfully Removed.",
-                "top-right",
-                false,
-                true,
-                true,
-                true,
-                undefined,
-                "dark",
-                "success"
-              );
-              getAllSchedulePerBranches();
-              setBackdrop(false);
-              setIsLobby(false);
-            }
-          },
-        });
-      } else {
-        const index = feed.findIndex((item) => item.id == removeId);
-        if (index !== -1) {
-          const update = [...feed.slice(0, index), ...feed.slice(index + 1)];
-          setFeed(update);
-          setValue("appointmentSchedule", []);
-          setIsLobby(false);
-        }
-        setBackdrop(false);
-      }
-    });
+     checkBeforeRemoving.execute(removeId)
+     .then((res) => {
+         if(res.data == 200) {
+             mutate(removeId, {
+                 onSuccess: (response: any) => {
+                     if(response.data == 200) {
+                         handleOnToast(
+                             "Successfully Removed.",
+                             "top-right",
+                             false,
+                             true,
+                             true,
+                             true,
+                             undefined,
+                             "dark",
+                             "success"
+                         );
+                         getAllSchedulePerBranches()
+                         setBackdrop(false)
+                         setIsLobby(false)
+                     }
+                 }
+             })
+         } else {
+             const index = feed.findIndex((item) => item.id == removeId)
+             if(index !== -1) {
+                 const update = [...feed.slice(0, index), ...feed.slice(index + 1)]
+                 setFeed(update)
+                 setValue('appointmentSchedule', [])
+                 setIsLobby(false)
+             }
+             setBackdrop(false)
+         }
+     })
   };
   const isCardSelected = (cardId: any) => {
     return selectedCard === cardId;
@@ -667,106 +668,105 @@ const WalkedIn: React.FC = () => {
       created_at: values.start,
       updated_at: values.start,
     };
-    if (!values) {
-      handleOnToast(
-        "Successfully created an appointment.",
-        "top-right",
-        false,
-        true,
-        true,
-        true,
-        undefined,
-        "dark",
-        "success"
-      );
-    } else {
-      if (isLobby) {
-        createAppointmentToLobby
-          .execute(obj)
-          .then((repo) => {
-            if (repo.data == 200) {
-              handleOnToast(
-                "Successfully created an appointment to lobby.",
-                "top-right",
-                false,
-                true,
-                true,
-                true,
-                undefined,
-                "dark",
-                "success"
-              );
-              setBackdrop(false);
-              setIsLobby(false);
-              reset({});
-              FuncFindAllWalkedInFromLobbies();
-              getAllSchedulePerBranches();
-            } else {
-              handleOnToast(
-                "Something went wrong.",
-                "top-right",
-                false,
-                true,
-                true,
-                true,
-                undefined,
-                "dark",
-                "error"
-              );
-              setBackdrop(false);
-            }
-          })
-          .catch((err) => {
-            handleOnToast(
-              "There is something went wrong. Kindly please check the form.",
-              "top-right",
-              false,
-              true,
-              true,
-              true,
-              undefined,
-              "dark",
-              "error"
-            );
-            setBackdrop(false);
-          });
-      } else {
-        useCreateNewAppoinment.mutate(obj, {
-          onSuccess: (response) => {
-            if (response?.data == 200) {
-              handleOnToast(
-                "Successfully created an appointment.",
-                "top-right",
-                false,
-                true,
-                true,
-                true,
-                undefined,
-                "dark",
-                "success"
-              );
-              setBackdrop(false);
-            }
-          },
-          onError: (error) => {
-            console.log(error);
-            handleOnToast(
-              "There is something went wrong. Kindly please check the form.",
-              "top-right",
-              false,
-              true,
-              true,
-              true,
-              undefined,
-              "dark",
-              "error"
-            );
-            setBackdrop(false);
-            reset({});
-          },
-        });
-      }
-    }
+    console.log(obj);
+     if(!values){
+         handleOnToast(
+             "Successfully created an appointment.",
+             "top-right",
+             false,
+             true,
+             true,
+             true,
+             undefined,
+             "dark",
+             "success"
+         );
+     } else {
+         if(isLobby) {
+             createAppointmentToLobby.execute(obj)
+             .then((repo) => {
+                 if(repo.data == 200) {
+                     handleOnToast(
+                         "Successfully created an appointment to lobby.",
+                         "top-right",
+                         false,
+                         true,
+                         true,
+                         true,
+                         undefined,
+                         "dark",
+                         "success"
+                     );
+                     setBackdrop(false)
+                     setIsLobby(false)
+                     reset({})
+                     FuncFindAllWalkedInFromLobbies()
+                     getAllSchedulePerBranches()
+                 } else {
+                     handleOnToast(
+                         "Something went wrong.",
+                         "top-right",
+                         false,
+                         true,
+                         true,
+                         true,
+                         undefined,
+                         "dark",
+                         "error"
+                     );
+                     setBackdrop(false)
+                 }
+             }).catch((err) => {
+                 handleOnToast(
+                     "There is something went wrong. Kindly please check the form.",
+                     "top-right",
+                     false,
+                     true,
+                     true,
+                     true,
+                     undefined,
+                     "dark",
+                     "error"
+                 );
+                 setBackdrop(false)
+             })
+         } else {
+             useCreateNewAppoinment.mutate(obj, {
+                 onSuccess: (response) => {
+                     if(response?.data == 200) {
+                         handleOnToast(
+                             "Successfully created an appointment.",
+                             "top-right",
+                             false,
+                             true,
+                             true,
+                             true,
+                             undefined,
+                             "dark",
+                             "success"
+                         );
+                         setBackdrop(false)
+                     }
+                 },
+                 onError: (error) => {
+                     console.log(error)
+                     handleOnToast(
+                         "There is something went wrong. Kindly please check the form.",
+                         "top-right",
+                         false,
+                         true,
+                         true,
+                         true,
+                         undefined,
+                         "dark",
+                         "error"
+                     );
+                     setBackdrop(false)
+                     reset({})
+                 }
+             })
+         }
+     }
   };
   const handleYesToLobby = () => {
     setIsLobby(!isLobby);
@@ -1273,7 +1273,7 @@ const WalkedIn: React.FC = () => {
                     <CardContent>
                       <div style={{ textAlign: "center" }}>
                         <img
-                          src="https://email.uplers.com/blog/wp-content/uploads/2022/07/1-Signatures-blog.gif"
+                          src="https:email.uplers.com/blog/wp-content/uploads/2022/07/1-Signatures-blog.gif"
                           style={{
                             width: "100%",
                             height: "auto",
@@ -1311,7 +1311,7 @@ const WalkedIn: React.FC = () => {
                     <CardContent>
                       <div style={{ textAlign: "center" }}>
                         <img
-                          src="https://i.pinimg.com/originals/fe/c2/39/fec23921611cc3abb6db1774e284a251.gif"
+                          src="https:i.pinimg.com/originals/fe/c2/39/fec23921611cc3abb6db1774e284a251.gif"
                           style={{
                             width: "54%",
                             height: "auto",

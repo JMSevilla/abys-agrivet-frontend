@@ -2,6 +2,7 @@ import { Typography } from "@mui/material";
 import NavSection from "./HomeNav";
 import { ReactNode } from "react";
 
+
 type Props = {
   children: ReactNode;
   showNavSection: boolean;
@@ -17,7 +18,7 @@ const HomeHeroSection = (props: Props) => {
             className={
               props.disableMarginTop
                 ? "mx-auto max-w-4xl"
-                : "mx-auto max-w-4xl py-32 sm:py-48 lg:py-56"
+                : "mx-auto max-w-4xl py-22 sm:py2 lg:py-45"
             }
           >
             {props.children}

@@ -122,6 +122,7 @@ import moment from "moment";
               borderRadius: "20px",
               cursor: "pointer",
             }}
+            handleClick={() => handleSelection("email")}        
           >
             <div style={{ textAlign: "center" }}>
               <img

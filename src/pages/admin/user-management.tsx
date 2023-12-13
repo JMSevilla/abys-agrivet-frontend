@@ -81,17 +81,28 @@ const UserManagement: React.FC = () => {
               />
             </>
           );
-        } else {
-          return (
-            <>
-              <Chip
-                variant="outlined"
-                size="small"
-                label="Manager"
-                color="warning"
-              />
-            </>
-          );
+        } else if (params.row.access_level == 2){ 
+            return (
+                <>
+                    <Chip 
+                    variant="outlined"
+                    size="small"
+                    label="Manager"
+                    color="warning"
+                    />
+                </>
+            )
+        } else { 
+            return (
+                <>
+                    <Chip 
+                    variant="outlined"
+                    size="small"
+                    label="Customer"
+                    color="success"
+                    />
+                </>
+            )
         }
       },
     },
