@@ -362,10 +362,8 @@ const DashboardNavigation: React.FC<NavigationProps> = (props) => {
                   "aria-labelledby": "basic-button",
                 }}
               >
-                <MenuItem onClick={() => setIsProfile(!isProfile)}>
-                  Profile
-                </MenuItem>
-                <Divider>Others</Divider>
+                <MenuItem onClick={() => setIsProfile(!isProfile)}>Profile</MenuItem>
+                {/*<Divider>Others</Divider>*/}
                 <MenuItem onClick={signoutModal} data-testid={"btnsignouttest"}>
                   Log out
                 </MenuItem>

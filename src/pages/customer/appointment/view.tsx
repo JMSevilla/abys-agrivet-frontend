@@ -11,9 +11,12 @@ import { useAuthenticationContext } from "@/utils/context/AuthContext/AuthContex
 import { useApiCallBack } from "@/utils/hooks/useApi";
 import { useReferences } from "@/utils/hooks/useToken";
 import { Chip, Container, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import moment from "moment";
+import { useEffect, useMemo, useState } from "react";
+
 
 const View: React.FC = () => {
+  const [primaryAppointments, setPrimaryAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [preload, setPreload] = useState(false);
   const { checkAuthentication } = useAuthenticationContext();
@@ -44,6 +47,9 @@ const View: React.FC = () => {
   const findFollowUpsByAPId = useApiCallBack(
     async (api, id: number) => await api.abys.FindFollowUpsByAPId(id)
   );
+  const findPrimaryAppointmentsById = useApiCallBack(
+    async (api, id: number) => await api.abys.FindPrimaryAppointments(id)
+  );
   function FuncFindAllAppointmentsByEmail() {
     findAppointmentsByEmail.execute(references?.email).then((res) => {
       setFeed(res.data);
@@ -66,6 +72,71 @@ const View: React.FC = () => {
   useEffect(() => {
     FuncFindAllAppointmentsByEmail();
   }, []);
+  const handeViewAllPrimaryAppointments = (id: number) => {
+    findPrimaryAppointmentsById.execute(id).then((response) => {
+      const result =
+        response.data?.length > 0 &&
+        response.data.map((item: any) => {
+          const toBeParsed = JSON.parse(item.appointmentSchedule);
+          return toBeParsed;
+        });
+      if (result) {
+        setPrimaryAppointments(result[0]);
+      }
+    });
+  };
+  const gridPrimaryList = useMemo(() => {
+    const primaryColumns: any = [
+      {
+        field: "id",
+        headerName: "ID",
+        width: 80,
+      },
+      {
+        field: "title",
+        headerName: "Title",
+        width: 120,
+        sortable: false,
+      },
+      {
+        field: "isHoliday",
+        headerName: "Holiday",
+        sortable: false,
+        width: 120,
+        renderCell: (params: any) => {
+          if (params.row.isHoliday) {
+            return <Chip size="small" color="error" label="Holiday" />;
+          } else {
+            return <Chip size="small" color="success" label="Normal Day" />;
+          }
+        },
+      },
+      {
+        field: "start",
+        headerName: "Appointment Start",
+        sortable: false,
+        width: 180,
+        valueGetter: (params: any) => `${moment(params.row.start).calendar()}`,
+      },
+      {
+        field: "end",
+        headerName: "Appointment End",
+        sortable: false,
+        width: 180,
+        valueGetter: (params: any) => `${moment(params.row.end).calendar()}`,
+      },
+    ];
+    return (
+      <>
+        <ProjectTable
+          columns={primaryColumns}
+          data={primaryAppointments ?? primaryAppointments}
+          sx={{ width: "100%" }}
+          pageSize={10}
+        />
+      </>
+    );
+  }, [primaryAppointments]);
   const columns: any[] = [
     { field: "id", headerName: "ID", width: 80 },
     {
@@ -193,6 +264,7 @@ const View: React.FC = () => {
         managersId: managersId,
         managersData: res.data,
       };
+      handeViewAllPrimaryAppointments(id);
       setSavedReferences(newSavedReferences);
       setViewMoreModal(!viewMoreModal);
     });
@@ -292,6 +364,16 @@ const View: React.FC = () => {
                 </UncontrolledCard>
               </Grid>
             </ControlledGrid>
+            <UncontrolledCard
+                    style={{
+                      marginTop: "10px",
+                    }}
+                  >
+                    <Typography gutterBottom variant="caption">
+                      Appointment
+                    </Typography>
+                    {gridPrimaryList}
+                  </UncontrolledCard>
             <UncontrolledCard style={{ marginTop: "10px" }}>
               <Typography variant="caption">
                 All follow-ups appointments
@@ -318,6 +400,7 @@ const View: React.FC = () => {
                 handleFollowUpSessions={() => {}}
               />
             </UncontrolledCard>
+            
           </ControlledModal>
         </Container>
       )}
