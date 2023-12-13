@@ -142,13 +142,13 @@ const Branch: React.FC = () => {
                   "modification"
                 )
               }
-              children="MODIFY"
               variant="text"
               size="small"
-            />
+            >
+              MODIFY
+            </NormalButton>
             {params.row.branchStatus == 1 ? (
               <NormalButton
-                children="DEACTIVATE"
                 variant="text"
                 size="small"
                 color="warning"
@@ -160,10 +160,11 @@ const Branch: React.FC = () => {
                     "deactivate"
                   )
                 }
-              />
+              >
+                DEACTIVATE
+              </NormalButton>
             ) : (
               <NormalButton
-                children="ACTIVATE"
                 variant="text"
                 size="small"
                 color="success"
@@ -175,10 +176,11 @@ const Branch: React.FC = () => {
                     "activate"
                   )
                 }
-              />
+              >
+                ACTIVATE
+              </NormalButton>
             )}
             <NormalButton
-              children="REMOVE"
               variant="text"
               size="small"
               color="error"
@@ -190,7 +192,9 @@ const Branch: React.FC = () => {
                   "deletion"
                 )
               }
-            />
+            >
+              REMOVE
+            </NormalButton>
           </div>
         );
       },
@@ -468,7 +472,6 @@ const Branch: React.FC = () => {
                 tabsValue == 1 && (
                   <>
                     <NormalButton
-                      children="REFRESH"
                       variant="outlined"
                       size="small"
                       sx={{
@@ -477,7 +480,9 @@ const Branch: React.FC = () => {
                         mb: 2,
                       }}
                       onClick={handleFindAllBranches}
-                    />
+                    >
+                      REFRESH
+                    </NormalButton>
                     <ProjectTable
                       sx={{ mt: 7, width: "100%" }}
                       data={branches}

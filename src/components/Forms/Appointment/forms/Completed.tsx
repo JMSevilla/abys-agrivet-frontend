@@ -2,22 +2,27 @@ import { Typography, Grid } from "@mui/material";
 import { useRouter } from "next/router";
 import { NormalButton } from "@/components/Button/NormalButton";
 import { useAtom } from "jotai";
-import { AppointmentAtom, AppointmentPetInformationAtom, AppointmentSchedulingAtom, AppointmentServicesAtom } from "@/utils/hooks/useAtomic";
+import {
+  AppointmentAtom,
+  AppointmentPetInformationAtom,
+  AppointmentSchedulingAtom,
+  AppointmentServicesAtom,
+} from "@/utils/hooks/useAtomic";
 import { useActiveSteps } from "@/utils/hooks/useActiveStep";
 import { MAX_APPOINTMENT_STEPS } from "..";
 
 export const Completed = () => {
-    const [appointment, setAppointment] = useAtom(AppointmentAtom)
-    const [services, setServices] = useAtom(AppointmentServicesAtom)
-    const [petinfo, setPetInfo] = useAtom(AppointmentPetInformationAtom)
-    const [schedule, setSchedule] = useAtom(AppointmentSchedulingAtom)
-    const { setActiveStep } = useActiveSteps(MAX_APPOINTMENT_STEPS)
+  const [appointment, setAppointment] = useAtom(AppointmentAtom);
+  const [services, setServices] = useAtom(AppointmentServicesAtom);
+  const [petinfo, setPetInfo] = useAtom(AppointmentPetInformationAtom);
+  const [schedule, setSchedule] = useAtom(AppointmentSchedulingAtom);
+  const { setActiveStep } = useActiveSteps(MAX_APPOINTMENT_STEPS);
   const handleStartOver = () => {
-    setActiveStep(0)
-    setAppointment(undefined)
-    setServices(undefined)
-    setPetInfo(undefined)
-    setSchedule(undefined)
+    setActiveStep(0);
+    setAppointment(undefined);
+    setServices(undefined);
+    setPetInfo(undefined);
+    setSchedule(undefined);
   };
 
   return (
@@ -32,8 +37,9 @@ export const Completed = () => {
           variant="outlined"
           fullWidth
           onClick={handleStartOver}
-          children="START OVER"
-        />
+        >
+          START OVER
+        </NormalButton>
       </Grid>
     </>
   );

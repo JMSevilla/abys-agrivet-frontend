@@ -105,7 +105,6 @@ export const Services = () => {
   const { handleOnToast } = useToastContext();
   const handleContinue = () => {
     const values = getValues();
-    console.log(values);
     if (values.service_id?.length <= 0 || values.service_id == undefined) {
       handleOnToast(
         "Kindly select services",

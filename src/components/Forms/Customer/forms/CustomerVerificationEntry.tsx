@@ -183,18 +183,20 @@ export const VerificationForm = () => {
           <NormalButton
             variant="outlined"
             size="small"
-            children="RESEND"
             onClick={handleResend}
             color="warning"
-          />
+          >
+            RESEND
+          </NormalButton>
           &nbsp;
           <NormalButton
             variant="outlined"
             size="small"
-            children="VERIFY"
             onClick={handleContinue}
             disabled={!isValid}
-          />
+          >
+            VERIFY
+          </NormalButton>
         </div>
       </UncontrolledCard>
       <ControlledBackdrop open={loading} />

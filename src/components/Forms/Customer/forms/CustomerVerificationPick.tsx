@@ -39,10 +39,7 @@ export const ChooseVerificationType = () => {
           resendCount: 0,
           isValid: 1,
           type: "sms",
-          verificationCredentials: {
-            email: customerDetails?.email,
-            phoneNumber: customerDetails?.phoneNumber,
-          },
+          phoneNumber: customerDetails?.phoneNumber,
         };
         setLoading(!loading);
         mutate(smsObject, {
@@ -100,10 +97,7 @@ export const ChooseVerificationType = () => {
           resendCount: 0,
           isValid: 1,
           type: "email",
-          verificationCredentials: {
-            email: customerDetails?.email,
-            phoneNumber: customerDetails?.phoneNumber,
-          },
+          phoneNumber: customerDetails?.phoneNumber,
         };
         setLoading(!loading);
         mutate(emailObject, {

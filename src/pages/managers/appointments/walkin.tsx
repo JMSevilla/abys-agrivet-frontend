@@ -47,6 +47,7 @@ import { styled, css } from "@mui/material";
 import { ControlledMobileNumberField } from "@/components/TextField/MobileNumberField";
 import { CreateNewAppointment, CreateNewLobbyAppointment } from "@/utils/types";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { DatePicker } from "@mui/x-date-pickers";
 
 const WalkedIn: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -210,6 +211,24 @@ const WalkedIn: React.FC = () => {
   const getAllServices = useApiCallBack((api) => api.abys.getAllServices());
   const hasNoMiddleName = watch("hasNoMiddleName");
   const hasNoMiddleNamePrevValue = usePreviousValue(hasNoMiddleName);
+  const [gender, setGender] = useState<
+    Array<{
+      name: string;
+      label: string;
+      value: string;
+    }>
+  >([
+    {
+      label: "Male",
+      name: "Male",
+      value: "male",
+    },
+    {
+      label: "Female",
+      name: "Female",
+      value: "female",
+    },
+  ]);
   const branchIdentifier = (branch_id: number) => {
     switch (branch_id) {
       case 1:
@@ -229,7 +248,14 @@ const WalkedIn: React.FC = () => {
     control,
   });
   const addNewPetInformation = () => {
-    append({ petName: "", petType: "", otherConcerns: "" });
+    append({
+      petName: "",
+      petType: "",
+      otherConcerns: "",
+      birthdate: new Date(),
+      breed: "",
+      gender: "",
+    });
   };
   const handleCancelAppointment = (id: number) => {
     cancelAppointmentLobby.execute(id).then((response) => {
@@ -580,40 +606,39 @@ const WalkedIn: React.FC = () => {
       setIsLobby(false);
     }
     setBackdrop(false);
-    // checkBeforeRemoving.execute(removeId)
-    // .then((res) => {
-    //     if(res.data == 200) {
-    //         mutate(removeId, {
-    //             onSuccess: (response: any) => {
-    //                 if(response.data == 200) {
-    //                     handleOnToast(
-    //                         "Successfully Removed.",
-    //                         "top-right",
-    //                         false,
-    //                         true,
-    //                         true,
-    //                         true,
-    //                         undefined,
-    //                         "dark",
-    //                         "success"
-    //                     );
-    //                     getAllSchedulePerBranches()
-    //                     setBackdrop(false)
-    //                     setIsLobby(false)
-    //                 }
-    //             }
-    //         })
-    //     } else {
-    //         const index = feed.findIndex((item) => item.id == removeId)
-    //         if(index !== -1) {
-    //             const update = [...feed.slice(0, index), ...feed.slice(index + 1)]
-    //             setFeed(update)
-    //             setValue('appointmentSchedule', [])
-    //             setIsLobby(false)
-    //         }
-    //         setBackdrop(false)
-    //     }
-    // })
+    checkBeforeRemoving.execute(removeId).then((res) => {
+      if (res.data == 200) {
+        mutate(removeId, {
+          onSuccess: (response: any) => {
+            if (response.data == 200) {
+              handleOnToast(
+                "Successfully Removed.",
+                "top-right",
+                false,
+                true,
+                true,
+                true,
+                undefined,
+                "dark",
+                "success"
+              );
+              getAllSchedulePerBranches();
+              setBackdrop(false);
+              setIsLobby(false);
+            }
+          },
+        });
+      } else {
+        const index = feed.findIndex((item) => item.id == removeId);
+        if (index !== -1) {
+          const update = [...feed.slice(0, index), ...feed.slice(index + 1)];
+          setFeed(update);
+          setValue("appointmentSchedule", []);
+          setIsLobby(false);
+        }
+        setBackdrop(false);
+      }
+    });
   };
   const isCardSelected = (cardId: any) => {
     return selectedCard === cardId;
@@ -642,105 +667,106 @@ const WalkedIn: React.FC = () => {
       created_at: values.start,
       updated_at: values.start,
     };
-    console.log(obj);
-    // if(!values){
-    //     handleOnToast(
-    //         "Successfully created an appointment.",
-    //         "top-right",
-    //         false,
-    //         true,
-    //         true,
-    //         true,
-    //         undefined,
-    //         "dark",
-    //         "success"
-    //     );
-    // } else {
-    //     if(isLobby) {
-    //         createAppointmentToLobby.execute(obj)
-    //         .then((repo) => {
-    //             if(repo.data == 200) {
-    //                 handleOnToast(
-    //                     "Successfully created an appointment to lobby.",
-    //                     "top-right",
-    //                     false,
-    //                     true,
-    //                     true,
-    //                     true,
-    //                     undefined,
-    //                     "dark",
-    //                     "success"
-    //                 );
-    //                 setBackdrop(false)
-    //                 setIsLobby(false)
-    //                 reset({})
-    //                 FuncFindAllWalkedInFromLobbies()
-    //                 getAllSchedulePerBranches()
-    //             } else {
-    //                 handleOnToast(
-    //                     "Something went wrong.",
-    //                     "top-right",
-    //                     false,
-    //                     true,
-    //                     true,
-    //                     true,
-    //                     undefined,
-    //                     "dark",
-    //                     "error"
-    //                 );
-    //                 setBackdrop(false)
-    //             }
-    //         }).catch((err) => {
-    //             handleOnToast(
-    //                 "There is something went wrong. Kindly please check the form.",
-    //                 "top-right",
-    //                 false,
-    //                 true,
-    //                 true,
-    //                 true,
-    //                 undefined,
-    //                 "dark",
-    //                 "error"
-    //             );
-    //             setBackdrop(false)
-    //         })
-    //     } else {
-    //         useCreateNewAppoinment.mutate(obj, {
-    //             onSuccess: (response) => {
-    //                 if(response?.data == 200) {
-    //                     handleOnToast(
-    //                         "Successfully created an appointment.",
-    //                         "top-right",
-    //                         false,
-    //                         true,
-    //                         true,
-    //                         true,
-    //                         undefined,
-    //                         "dark",
-    //                         "success"
-    //                     );
-    //                     setBackdrop(false)
-    //                 }
-    //             },
-    //             onError: (error) => {
-    //                 console.log(error)
-    //                 handleOnToast(
-    //                     "There is something went wrong. Kindly please check the form.",
-    //                     "top-right",
-    //                     false,
-    //                     true,
-    //                     true,
-    //                     true,
-    //                     undefined,
-    //                     "dark",
-    //                     "error"
-    //                 );
-    //                 setBackdrop(false)
-    //                 reset({})
-    //             }
-    //         })
-    //     }
-    // }
+    if (!values) {
+      handleOnToast(
+        "Successfully created an appointment.",
+        "top-right",
+        false,
+        true,
+        true,
+        true,
+        undefined,
+        "dark",
+        "success"
+      );
+    } else {
+      if (isLobby) {
+        createAppointmentToLobby
+          .execute(obj)
+          .then((repo) => {
+            if (repo.data == 200) {
+              handleOnToast(
+                "Successfully created an appointment to lobby.",
+                "top-right",
+                false,
+                true,
+                true,
+                true,
+                undefined,
+                "dark",
+                "success"
+              );
+              setBackdrop(false);
+              setIsLobby(false);
+              reset({});
+              FuncFindAllWalkedInFromLobbies();
+              getAllSchedulePerBranches();
+            } else {
+              handleOnToast(
+                "Something went wrong.",
+                "top-right",
+                false,
+                true,
+                true,
+                true,
+                undefined,
+                "dark",
+                "error"
+              );
+              setBackdrop(false);
+            }
+          })
+          .catch((err) => {
+            handleOnToast(
+              "There is something went wrong. Kindly please check the form.",
+              "top-right",
+              false,
+              true,
+              true,
+              true,
+              undefined,
+              "dark",
+              "error"
+            );
+            setBackdrop(false);
+          });
+      } else {
+        useCreateNewAppoinment.mutate(obj, {
+          onSuccess: (response) => {
+            if (response?.data == 200) {
+              handleOnToast(
+                "Successfully created an appointment.",
+                "top-right",
+                false,
+                true,
+                true,
+                true,
+                undefined,
+                "dark",
+                "success"
+              );
+              setBackdrop(false);
+            }
+          },
+          onError: (error) => {
+            console.log(error);
+            handleOnToast(
+              "There is something went wrong. Kindly please check the form.",
+              "top-right",
+              false,
+              true,
+              true,
+              true,
+              undefined,
+              "dark",
+              "error"
+            );
+            setBackdrop(false);
+            reset({});
+          },
+        });
+      }
+    }
   };
   const handleYesToLobby = () => {
     setIsLobby(!isLobby);
@@ -815,7 +841,6 @@ const WalkedIn: React.FC = () => {
                 size="medium"
                 color="success"
                 fullWidth
-                children="Proceed appointment"
                 onClick={() =>
                   handleProceedAppointment(
                     params.row.id,
@@ -836,16 +861,19 @@ const WalkedIn: React.FC = () => {
                     params.row.updated_at
                   )
                 }
-              />{" "}
+              >
+                Proceed appointment
+              </NormalButton>{" "}
               <br />
               <NormalButton
                 variant="text"
                 size="medium"
                 color="error"
                 fullWidth
-                children="Cancel appointment"
                 onClick={() => handleCancelAppointment(params.row.id)}
-              />
+              >
+                Cancel appointment
+              </NormalButton>
             </Popover>
           </>
         );
@@ -979,9 +1007,10 @@ const WalkedIn: React.FC = () => {
                 size="small"
                 variant="text"
                 color="success"
-                children="View lobby"
                 onClick={() => setViewLobby(!viewLobby)}
-              />
+              >
+                View lobby
+              </NormalButton>
             </div>
             {/* walk in appointment form */}
             <UncontrolledCard style={{ marginTop: "20px" }}>
@@ -994,10 +1023,11 @@ const WalkedIn: React.FC = () => {
                 }}
                 size="small"
                 variant="text"
-                children={showSchedule ? "Hide Calendar" : "Show Calendar"}
                 color={showSchedule ? "error" : "info"}
                 onClick={() => setShowSchedule(!showSchedule)}
-              />
+              >
+                {showSchedule ? "Hide Calendar" : "Show Calendar"}
+              </NormalButton>
               <hr />
               {showSchedule && (
                 <SchedulerCalendar
@@ -1105,16 +1135,18 @@ const WalkedIn: React.FC = () => {
               <NormalButton
                 size="small"
                 variant="text"
-                children="Add new pet"
                 sx={{
                   float: "right",
                   mt: 2,
                   mb: 2,
                 }}
                 onClick={addNewPetInformation}
-              />
+              >
+                Add new pet
+              </NormalButton>
               {reverseFields.map((item, i) => (
                 <div
+                  key={i}
                   style={{
                     marginTop: "20px",
                   }}
@@ -1133,9 +1165,10 @@ const WalkedIn: React.FC = () => {
                           variant="outlined"
                           size="small"
                           color="error"
-                          children="REMOVE"
                           onClick={() => remove(i)}
-                        />
+                        >
+                          REMOVE
+                        </NormalButton>
                         <Typography variant="overline">
                           Kindly complete the pet information form.
                         </Typography>
@@ -1181,6 +1214,38 @@ const WalkedIn: React.FC = () => {
                             />
                           </Grid>
                         </ControlledGrid>
+                        <ControlledTextField
+                          control={control}
+                          name={`petInfo.${i}.breed`}
+                          shouldUnregister
+                          label="Pet breed"
+                          sx={{ mb: 2 }}
+                          required
+                        />
+                        <ControlledSelectField
+                          control={control}
+                          name={`petInfo.${i}.gender`}
+                          options={gender}
+                          label="Select pet gender"
+                          required
+                          shouldUnregister
+                        />
+                        <DatePicker
+                          onChange={(e: any) =>
+                            setValue(
+                              `petInfo.${i}.birthdate`,
+                              moment(e).add(1, "day")
+                            )
+                          }
+                          label="Birthdate"
+                          sx={{
+                            mb: 2,
+                            mr: 1,
+                            mt: 3,
+                            width: "100%",
+                            padding: "15px",
+                          }}
+                        />
                       </UncontrolledCard>
                     </div>
                   </Timeline>
@@ -1295,9 +1360,10 @@ const WalkedIn: React.FC = () => {
               }}
               size="small"
               variant="outlined"
-              children="APPOINT"
               onClick={handleAppoint}
-            />
+            >
+              APPOINT
+            </NormalButton>
             <ControlledModal
               open={asks}
               buttonTextAccept="YES"

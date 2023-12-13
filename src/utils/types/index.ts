@@ -154,7 +154,7 @@ export type SMSVerificationProps = {
   resendCount: number | undefined;
   isValid: number | undefined;
   type: string | undefined;
-  verificationCredentials: SMSVerificationCredentialsProps;
+  phoneNumber: string | undefined
 };
 
 export type BranchProps = {

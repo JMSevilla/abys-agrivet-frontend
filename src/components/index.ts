@@ -11,7 +11,6 @@ export * from "./Grid/Grid";
 export * from "./Backdrop/Backdrop";
 export * from "./TextField/TextField";
 export * from "./Card/Card";
-export * from "./Card/CustomCard";
 export * from "./SelectField/MultipleSelection";
 export * from "./SelectField/PlainSelectField";
 export * from "./SelectField";

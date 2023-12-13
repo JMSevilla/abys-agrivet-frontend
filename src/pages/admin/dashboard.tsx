@@ -332,8 +332,9 @@ const Dashboard: React.FC = () => {
                   onChange={handleSelectedBranches}
                 >
                   {radioBranches?.length > 0 &&
-                    radioBranches?.map((item: any) => (
+                    radioBranches?.map((item: any, index) => (
                       <FormControlLabel
+                        key={index}
                         value={item?.branch_id}
                         control={<Radio />}
                         label={item?.branchName}

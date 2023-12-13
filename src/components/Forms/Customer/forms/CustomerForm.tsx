@@ -130,7 +130,10 @@ const CustomerAccountForm = () => {
             type="password"
             shouldUnregister
           />
-          <PasswordStrengthMeter result={result} password={getValues().password} />
+          <PasswordStrengthMeter
+            result={result}
+            password={getValues().password}
+          />
         </Grid>
         <Grid item xs={6}>
           <ControlledTextField
@@ -181,7 +184,10 @@ export const CustomerAccountFormAdditional = () => {
       setOpen(!open);
       const obj = {
         firstname: values.firstname,
-        middlename: customerDetails?.middlename == null ? "N/A" : customerDetails?.middlename,
+        middlename:
+          customerDetails?.middlename == null
+            ? "N/A"
+            : customerDetails?.middlename,
         lastname: values.lastname,
         email: values.email,
         username: values.username,
@@ -225,7 +231,7 @@ export const CustomerAccountFormAdditional = () => {
         },
       });
     })();
-    return false
+    return false;
   };
   return (
     <FormProvider {...form}>
@@ -243,10 +249,11 @@ export const CustomerAccountFormAdditional = () => {
           }}
           variant="outlined"
           size="small"
-          children="CREATE"
           onClick={handleContinue}
           disabled={!isValid}
-        />
+        >
+          CREATE
+        </NormalButton>
       </UncontrolledCard>
       <ControlledBackdrop open={open} />
     </FormProvider>

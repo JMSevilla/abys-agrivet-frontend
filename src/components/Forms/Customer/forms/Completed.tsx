@@ -21,8 +21,9 @@ export const Completed = () => {
           variant="outlined"
           fullWidth
           onClick={handleProceedToLogin}
-          children="PROCEED TO LOGIN"
-        />
+        >
+          PROCEED TO LOGIN
+        </NormalButton>
       </Grid>
     </>
   );

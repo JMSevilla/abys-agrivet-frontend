@@ -178,9 +178,10 @@ export const BranchFormField = () => {
         }}
         variant="outlined"
         size="small"
-        children="SAVE"
         onClick={handleContinue}
-      />
+      >
+        SAVE
+      </NormalButton>
       <ControlledBackdrop open={loading} />
     </FormProvider>
   );
