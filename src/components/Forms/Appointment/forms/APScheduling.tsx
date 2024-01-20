@@ -1,6 +1,6 @@
 import { SchedulerCalendar } from "@/components/Calendar/Calendar";
 import { UncontrolledCard } from "@/components/Card/Card";
-import { Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import {
   AppointmentSchedulingAtom,
@@ -26,13 +26,22 @@ import { CreateNewScheduleProps } from "@/utils/types";
 import { useMutation, useQuery } from "react-query";
 import { useReferences } from "@/utils/hooks/useToken";
 import { ControlledBackdrop } from "@/components/Backdrop/Backdrop";
-import { ControlledTextField } from "@/components/TextField/TextField";
+import { TextField } from "@/components/TextField/TextField";
+import { ControlledGrid } from "@/components/Grid/Grid";
+
+import { TimePicker } from "@mui/x-date-pickers";
 
 const APSchedulingForm = () => {
   const [services, setServices] = useAtom(AppointmentServicesAtom);
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [references, setReferences] = useReferences();
+  const [appointmentDetails, setAppointmentDetails] = useState(false);
+  const initialTime = moment().set({ hour: 9, minute: 0, second: 0 });
+  const [scheduleDetails, setScheduleDetails] = useState({
+    scheduleTitle: "",
+    scheduleTime: initialTime,
+  });
   const GetAllSchedulePerBranch = useApiCallBack(
     async (
       api,
@@ -71,6 +80,14 @@ const APSchedulingForm = () => {
   const checkIfDayPropsIsHoliday = useApiCallBack(
     async (api, id: number) => await api.abys.CheckIfDayPropIsHoliday(id)
   );
+  const checkTimeAvailability = useApiCallBack(
+    async (
+      api,
+      args: {
+        checkTime: any;
+      }
+    ) => await api.abys.checkSchedulingTime(args)
+  );
   const getallscheduleperbranches = () => {
     GetAllSchedulePerBranch.execute({
       branch: services?.branch_id ?? 0,
@@ -96,7 +113,8 @@ const APSchedulingForm = () => {
     getallscheduleperbranches();
   }, []);
   useEffect(() => {}, [appointmentSchedules]);
-  const [selectedEvent, setSelectedEvent] = useState<any>([]);
+  const [slot, setSlot] = useState<any>({ start: new Date(), end: new Date() });
+
   const handleScheduleSelection = ({ start, end }: SlotInfo) => {
     setLoading(!loading);
     const selectedEvents = feed.filter((event) => {
@@ -193,40 +211,65 @@ const APSchedulingForm = () => {
             });
           });
         } else {
-          const test = window.prompt("Schedule title");
-          if (test) {
-            getHighestID.execute().then((re) => {
-              const id =
-                re?.data == null || re?.data == ""
-                  ? lastId + 1
-                  : re.data?.id + 1;
-
-              const title = test;
-              const isHoliday = false;
-              const newSched = [
-                {
-                  id,
-                  start,
-                  end,
-                  title,
-                  isHoliday,
-                },
-              ];
-              setLoading(false);
-              setFeed((prevState) => [...prevState, ...newSched]);
-              setValue("appointmentSchedule", newSched);
-              setValue("start", moment(start).add(1, "day").toDate());
-              setValue("end", moment(start).add(1, "day").toDate());
-              setLastId(lastId + 1);
-              setRemoveId(id);
-            });
-          } else {
-            setLoading(false);
-          }
+          setAppointmentDetails(!appointmentDetails);
+          setSlot({
+            ...slot,
+            start: start,
+            end: end,
+          });
         }
       }
     }
   };
+  const scheduleTitleOnChange = (event: any) => {
+    const value = event.target.value;
+    setScheduleDetails({
+      ...scheduleDetails,
+      scheduleTitle: value,
+    });
+  };
+
+  const scheduleDetailsOnSave = () => {
+    getHighestID.execute().then((re) => {
+      const id =
+        re?.data == null || re?.data == "" ? lastId + 1 : re.data?.id + 1;
+
+      const title = scheduleDetails.scheduleTitle;
+      const isHoliday = false;
+      const combinedStartTime = moment(slot.start)
+        .set({
+          hour: scheduleDetails.scheduleTime.hour(),
+          minute: scheduleDetails.scheduleTime.minute(),
+          second: 0,
+        })
+        .toDate();
+
+      const newSched = [
+        {
+          id,
+          start: combinedStartTime,
+          end: slot.end,
+          title,
+          isHoliday,
+        },
+      ];
+      console.log(newSched);
+      setLoading(false);
+      setFeed((prevState) => [...prevState, ...newSched]);
+      setValue("appointmentSchedule", newSched);
+      setValue("start", moment(slot.start).add(1, "day").toDate());
+      setValue("end", moment(slot.end).add(1, "day").toDate());
+      setLastId(lastId + 1);
+      setRemoveId(id);
+      setAppointmentDetails(false);
+      const momentStart = moment(combinedStartTime);
+      const formattedStart = momentStart.format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+      checkTimeAvailability
+        .execute({ checkTime: formattedStart })
+        .then((res) => console.log(res));
+    });
+  };
+
   const handleSelectedEvent = (event: any) => {
     const closedCaseSensitive = event.title.toLowerCase();
     const closedIncludes =
@@ -284,6 +327,13 @@ const APSchedulingForm = () => {
       }
     });
   };
+
+  const timePickOnChange = (newTime: any) => {
+    setScheduleDetails({
+      ...scheduleDetails,
+      scheduleTime: newTime,
+    });
+  };
   return (
     <>
       <UncontrolledCard style={{ marginTop: "10px" }}>
@@ -309,10 +359,49 @@ const APSchedulingForm = () => {
           </Typography>
         </ControlledModal>
         <ControlledBackdrop open={loading} />
+        <ControlledModal
+          open={appointmentDetails}
+          handleClose={() => setAppointmentDetails(false)}
+          handleDecline={() => setAppointmentDetails(false)}
+          buttonTextAccept="SAVE"
+          buttonTextDecline="CANCEL"
+          color="success"
+          handleSubmit={scheduleDetailsOnSave}
+          maxWidth="md"
+        >
+          <Typography variant="button">Appointment Details</Typography>
+          <ControlledGrid>
+            <Grid item xs={6}>
+              <TextField
+                label="Schedule Title"
+                value={scheduleDetails.scheduleTitle}
+                onChange={scheduleTitleOnChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TimePicker
+                sx={{
+                  mt: 4,
+                  width: "100%",
+                }}
+                value={scheduleDetails.scheduleTime}
+                onChange={timePickOnChange}
+              />
+            </Grid>
+          </ControlledGrid>
+        </ControlledModal>
       </UncontrolledCard>
     </>
   );
 };
+
+/**
+ *
+ * @author JM
+ * 9-10 AM > 1st customer > if second customer select 9-10AM it should validate > filter mechanism
+ *
+ *
+ */
 
 export const APScheduling = () => {
   const [loading, setLoading] = useState(false);
@@ -345,17 +434,21 @@ export const APScheduling = () => {
     const values = getValues();
     if (values.appointmentSchedule?.length > 0) {
       values.appointmentSchedule.map((item) => {
+        const momentStart = moment(item.start);
+        const formattedStart = momentStart.format("YYYY-MM-DDTHH:mm:ss.SSSZ"); // Format in ISO 8601
+
         const obj: any = {
           userid: references?.id,
           branch: services?.branch_id,
           mockSchedule: JSON.stringify(values),
           status: 1,
           isHoliday: item.isHoliday ? 1 : 0,
-          start: item.start,
+          start: formattedStart,
           title: item.title,
           end: item.start,
         };
         setLoading(!loading);
+        console.log(obj);
         mutate(obj, {
           onSuccess: (response) => {
             if (response?.data == 200) {

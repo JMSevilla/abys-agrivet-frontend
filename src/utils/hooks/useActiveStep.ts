@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
 
-export const activeStepAtom = atom(0);
+export const activeStepAtom = atom(3);
 export const useActiveSteps = (MAX_LENGTH_ARRAY: number) => {
   const [activeStep, setActiveStep] = useAtom(activeStepAtom);
 

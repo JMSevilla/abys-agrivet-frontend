@@ -181,7 +181,7 @@ export type CreateNewScheduleProps = {
   mockSchedule: string | undefined
   status: number
   isHoliday: any
-  start: Date
+  start: any
   title: string | undefined
 }
 

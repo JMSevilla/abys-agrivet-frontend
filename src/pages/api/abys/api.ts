@@ -245,4 +245,9 @@ export class AbysApi {
   public deleteRecords(id: number){
     return this.axios.delete(`/api/implappointment/delete-records/${id}`)
   }
+  public checkSchedulingTime(props: {
+    checkTime: any
+  }) {
+    return this.axios.post('/api/implappointment/time-filter-mechanism', props)
+  }
 }
