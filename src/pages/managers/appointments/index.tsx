@@ -404,7 +404,8 @@ const Appointments: React.FC = () => {
     branch_id: number,
     petInfo: any,
     session: number,
-    managersId: number
+    managersId: number,
+    time: any
   ) => {
     setPreload(!preload);
     getSessionUser.execute(managersId).then((response) => {
@@ -422,6 +423,7 @@ const Appointments: React.FC = () => {
           response?.data == undefined || !response.data
             ? "None"
             : response?.data?.firstname + " " + response?.data?.lastname,
+        time: time,
       };
       setSavedReferences(newSavedReferences);
       setViewMoreModal(!viewMoreModal);
@@ -666,7 +668,10 @@ const Appointments: React.FC = () => {
                     params.row.branch_id,
                     params.row.petInfo,
                     params.row.isSessionStarted,
-                    params.row.managersId
+                    params.row.managersId,
+                    JSON.parse(params.row.appointmentSchedule).find(
+                      (item: any) => item.title
+                    )
                   )
                 }
               >
@@ -1094,6 +1099,14 @@ const Appointments: React.FC = () => {
                                       </Typography>
                                     )
                                   )}
+                              </UncontrolledCard>
+                              <UncontrolledCard style={{ marginTop: "10px" }}>
+                                <Typography variant="button">
+                                  Title & Time
+                                </Typography>
+                                <Typography variant="body1" sx={{ mb: 2 }}>
+                                  {savedReferences.time?.title}
+                                </Typography>
                               </UncontrolledCard>
                             </Grid>
                             <Grid item xs={6}>

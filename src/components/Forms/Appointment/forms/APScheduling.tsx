@@ -28,8 +28,10 @@ import { useReferences } from "@/utils/hooks/useToken";
 import { ControlledBackdrop } from "@/components/Backdrop/Backdrop";
 import { TextField } from "@/components/TextField/TextField";
 import { ControlledGrid } from "@/components/Grid/Grid";
+import { SelectField } from "@/components/SelectField";
 
 import { TimePicker } from "@mui/x-date-pickers";
+import { AlertMessagePlacement } from "@/utils/alert";
 
 const APSchedulingForm = () => {
   const [services, setServices] = useAtom(AppointmentServicesAtom);
@@ -65,6 +67,40 @@ const APSchedulingForm = () => {
   const { control, setValue, getValues, watch } =
     useFormContext<AppointmentSchedulingType>();
   const [removeId, setRemoveId] = useState(0);
+  const [selectedTime, setSelectedTime] = useState([
+    {
+      label: "9:00AM-10:00AM",
+      value: "9-10AM",
+    },
+    {
+      label: "10:00AM-11:00AM",
+      value: "10-11AM",
+    },
+    {
+      label: "11:00AM-12:00PM",
+      value: "11-12PM",
+    },
+    {
+      label: "12:00PM-1:00PM",
+      value: "12-1PM",
+    },
+    {
+      label: "1:00PM-2:00PM",
+      value: "1-2PM",
+    },
+    {
+      label: "2:00PM-3:00PM",
+      value: "2-3PM",
+    },
+    {
+      label: "3:00PM-4:00PM",
+      value: "3-4PM",
+    },
+    {
+      label: "4:00PM-5:00PM",
+      value: "4-5PM",
+    },
+  ]);
   const [feed, setFeed] = useState<
     Array<{
       id: number;
@@ -80,13 +116,14 @@ const APSchedulingForm = () => {
   const checkIfDayPropsIsHoliday = useApiCallBack(
     async (api, id: number) => await api.abys.CheckIfDayPropIsHoliday(id)
   );
-  const checkTimeAvailability = useApiCallBack(
+  const checkTimeSchedule = useApiCallBack(
     async (
       api,
       args: {
-        checkTime: any;
+        time: string;
+        start: any;
       }
-    ) => await api.abys.checkSchedulingTime(args)
+    ) => await api.abys.timeSchedule(args)
   );
   const getallscheduleperbranches = () => {
     GetAllSchedulePerBranch.execute({
@@ -217,6 +254,7 @@ const APSchedulingForm = () => {
             start: start,
             end: end,
           });
+          setLoading(false);
         }
       }
     }
@@ -236,37 +274,24 @@ const APSchedulingForm = () => {
 
       const title = scheduleDetails.scheduleTitle;
       const isHoliday = false;
-      const combinedStartTime = moment(slot.start)
-        .set({
-          hour: scheduleDetails.scheduleTime.hour(),
-          minute: scheduleDetails.scheduleTime.minute(),
-          second: 0,
-        })
-        .toDate();
-
       const newSched = [
         {
           id,
-          start: combinedStartTime,
+          start: slot.start,
           end: slot.end,
-          title,
+          title: title + " " + timeVal,
           isHoliday,
         },
       ];
-      console.log(newSched);
       setLoading(false);
       setFeed((prevState) => [...prevState, ...newSched]);
+      setValue("time", timeVal);
       setValue("appointmentSchedule", newSched);
       setValue("start", moment(slot.start).add(1, "day").toDate());
       setValue("end", moment(slot.end).add(1, "day").toDate());
       setLastId(lastId + 1);
       setRemoveId(id);
       setAppointmentDetails(false);
-      const momentStart = moment(combinedStartTime);
-      const formattedStart = momentStart.format("YYYY-MM-DDTHH:mm:ss.SSSZ");
-      checkTimeAvailability
-        .execute({ checkTime: formattedStart })
-        .then((res) => console.log(res));
     });
   };
 
@@ -327,12 +352,18 @@ const APSchedulingForm = () => {
       }
     });
   };
-
-  const timePickOnChange = (newTime: any) => {
-    setScheduleDetails({
-      ...scheduleDetails,
-      scheduleTime: newTime,
-    });
+  const [isAlert, setIsAlert] = useState(false);
+  const [timeVal, setTimeVal] = useState("");
+  const handleChangeScheduleTime = (event: any) => {
+    checkTimeSchedule
+      .execute({
+        start: moment(slot.start).add(1, "day").toDate(),
+        time: event,
+      })
+      .then((res) => {
+        setIsAlert(res.data);
+        setTimeVal(event);
+      });
   };
   return (
     <>
@@ -368,8 +399,15 @@ const APSchedulingForm = () => {
           color="success"
           handleSubmit={scheduleDetailsOnSave}
           maxWidth="md"
+          hideAgreeButton={isAlert}
         >
           <Typography variant="button">Appointment Details</Typography>
+          {isAlert &&
+            AlertMessagePlacement({
+              severity: "error",
+              title: "Schedule Time",
+              description: "The selected time is already occupied.",
+            })}
           <ControlledGrid>
             <Grid item xs={6}>
               <TextField
@@ -379,13 +417,14 @@ const APSchedulingForm = () => {
               />
             </Grid>
             <Grid item xs={6}>
-              <TimePicker
+              <SelectField
+                label="Select Time"
+                options={selectedTime}
                 sx={{
-                  mt: 4,
                   width: "100%",
                 }}
-                value={scheduleDetails.scheduleTime}
-                onChange={timePickOnChange}
+                onChange={handleChangeScheduleTime}
+                value={timeVal}
               />
             </Grid>
           </ControlledGrid>
@@ -434,21 +473,18 @@ export const APScheduling = () => {
     const values = getValues();
     if (values.appointmentSchedule?.length > 0) {
       values.appointmentSchedule.map((item) => {
-        const momentStart = moment(item.start);
-        const formattedStart = momentStart.format("YYYY-MM-DDTHH:mm:ss.SSSZ"); // Format in ISO 8601
-
         const obj: any = {
           userid: references?.id,
           branch: services?.branch_id,
           mockSchedule: JSON.stringify(values),
           status: 1,
           isHoliday: item.isHoliday ? 1 : 0,
-          start: formattedStart,
+          start: values.start,
           title: item.title,
-          end: item.start,
+          end: values.start,
+          schedTime: values.time,
         };
         setLoading(!loading);
-        console.log(obj);
         mutate(obj, {
           onSuccess: (response) => {
             if (response?.data == 200) {

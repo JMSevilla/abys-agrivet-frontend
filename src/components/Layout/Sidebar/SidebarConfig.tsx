@@ -6,11 +6,11 @@ import { ListItemIcon } from "@mui/material";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 
-import EventNoteIcon from '@mui/icons-material/EventNote'
-import CreateIcon from '@mui/icons-material/Create';
-import PreviewIcon from '@mui/icons-material/Preview';
-import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventNoteIcon from "@mui/icons-material/EventNote";
+import CreateIcon from "@mui/icons-material/Create";
+import PreviewIcon from "@mui/icons-material/Preview";
+import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 type sidebarProps = {
   objectID: number;
@@ -53,8 +53,6 @@ export const sidebarSettingsArea: SettingsListOptions[] = [
     icon: <SettingsIcon className="text-white" />,
   },
 ];
-
-
 
 export const sidebarList: sidebarProps[] = [
   {
@@ -121,12 +119,13 @@ export const sidebarList: sidebarProps[] = [
   },
   {
     objectID: 4,
-    name: 'Record Management',
-    title: 'Record',
-    uri: '/managers/record-management',
+    name: "Record Management",
+    title: "Record",
+    uri: "/admin/dashboard",
     dropDown: false,
-    icon : <AssessmentIcon className="text-white" />
-  }
+    icon: <AssessmentIcon className="text-white" />,
+    disable: true,
+  },
 ];
 
 export const sidebarExpand: sidebarExpandProps[] = [
@@ -223,7 +222,7 @@ export const sidebarCustomerList: sidebarProps[] = [
       },
     ],
   },
-]
+];
 
 export const sidebarCustomerExpand: sidebarExpandProps[] = [
   {
@@ -261,27 +260,27 @@ export const sidebarCustomerExpand: sidebarExpandProps[] = [
         ),
       },
     ],
-  }
-]
+  },
+];
 
 export const sidebarManagersList: sidebarProps[] = [
   {
     objectID: 1,
-    name: 'Managers',
-    title: 'Manager Overview',
-    uri: '/managers/dashboard',
+    name: "Managers",
+    title: "Manager Overview",
+    uri: "/managers/dashboard",
     dropDown: false,
-    icon: <AssessmentIcon className="text-white" />
+    icon: <AssessmentIcon className="text-white" />,
   },
   {
     objectID: 2,
-    name: 'Appointments',
-    title: 'Appointments',
+    name: "Appointments",
+    title: "Appointments",
     dropDown: true,
     icon: <CalendarMonthIcon className="text-white" />,
     dropDownChildren: [
       {
-        parentMenu: 'Appointments',
+        parentMenu: "Appointments",
         icon: (
           <>
             <ListItemIcon>
@@ -291,9 +290,9 @@ export const sidebarManagersList: sidebarProps[] = [
         ),
         childMenu: [
           {
-            title: 'Walked-In',
+            title: "Walked-In",
             dropDown: true,
-            uri:'/managers/appointments/walkin',
+            uri: "/managers/appointments/walkin",
             icon: (
               <>
                 <ListItemIcon>
@@ -303,9 +302,9 @@ export const sidebarManagersList: sidebarProps[] = [
             ),
           },
           {
-            title: 'List',
+            title: "List",
             dropDown: true,
-            uri:'/managers/appointments/',
+            uri: "/managers/appointments/",
             icon: (
               <>
                 <ListItemIcon>
@@ -313,25 +312,25 @@ export const sidebarManagersList: sidebarProps[] = [
                 </ListItemIcon>
               </>
             ),
-          }
+          },
         ],
-        dropDown: false
-      }
-    ]
+        dropDown: false,
+      },
+    ],
   },
   {
     objectID: 3,
-    name: 'Record Management',
-    title: 'Record',
-    uri: '/managers/record-management',
+    name: "Record Management",
+    title: "Record",
+    uri: "/managers/record-management",
     dropDown: false,
-    icon : <AssessmentIcon className="text-white" />
-  }
-]
+    icon: <AssessmentIcon className="text-white" />,
+  },
+];
 
 export const sidebarManagersExpand: sidebarExpandProps[] = [
   {
-    parentMenu: 'Appointments',
+    parentMenu: "Appointments",
     icon: (
       <>
         <ListItemIcon>
@@ -365,5 +364,5 @@ export const sidebarManagersExpand: sidebarExpandProps[] = [
         ),
       },
     ],
-  }
-]
+  },
+];

@@ -250,4 +250,10 @@ export class AbysApi {
   }) {
     return this.axios.post('/api/implappointment/time-filter-mechanism', props)
   }
+  public timeSchedule(props : {
+    time: string,
+    start: any
+  }) {
+    return this.axios.post('/api/implappointment/check-schedule-time', props)
+  }
 }

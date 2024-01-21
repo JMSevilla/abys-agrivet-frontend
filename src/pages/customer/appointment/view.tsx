@@ -14,7 +14,6 @@ import { Chip, Container, Grid, Typography } from "@mui/material";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
 
-
 const View: React.FC = () => {
   const [primaryAppointments, setPrimaryAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -90,12 +89,12 @@ const View: React.FC = () => {
       {
         field: "id",
         headerName: "ID",
-        width: 80,
+        width: 400,
       },
       {
         field: "title",
         headerName: "Title",
-        width: 120,
+        width: 300,
         sortable: false,
       },
       {
@@ -110,20 +109,6 @@ const View: React.FC = () => {
             return <Chip size="small" color="success" label="Normal Day" />;
           }
         },
-      },
-      {
-        field: "start",
-        headerName: "Appointment Start",
-        sortable: false,
-        width: 180,
-        valueGetter: (params: any) => `${moment(params.row.start).calendar()}`,
-      },
-      {
-        field: "end",
-        headerName: "Appointment End",
-        sortable: false,
-        width: 180,
-        valueGetter: (params: any) => `${moment(params.row.end).calendar()}`,
       },
     ];
     return (
@@ -365,15 +350,15 @@ const View: React.FC = () => {
               </Grid>
             </ControlledGrid>
             <UncontrolledCard
-                    style={{
-                      marginTop: "10px",
-                    }}
-                  >
-                    <Typography gutterBottom variant="caption">
-                      Appointment
-                    </Typography>
-                    {gridPrimaryList}
-                  </UncontrolledCard>
+              style={{
+                marginTop: "10px",
+              }}
+            >
+              <Typography gutterBottom variant="caption">
+                Appointment
+              </Typography>
+              {gridPrimaryList}
+            </UncontrolledCard>
             <UncontrolledCard style={{ marginTop: "10px" }}>
               <Typography variant="caption">
                 All follow-ups appointments
@@ -400,7 +385,6 @@ const View: React.FC = () => {
                 handleFollowUpSessions={() => {}}
               />
             </UncontrolledCard>
-            
           </ControlledModal>
         </Container>
       )}
